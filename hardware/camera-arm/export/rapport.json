@@ -38,9 +38,14 @@
   "vis_dmaj": 7.8,
   "vis_pas": 2.0,
   "vis_prof": 0.9,
-  "vis_jeu": 0.3,
+  "vis_jeu": 0.4,
   "vis_tete_d": 18.0,
   "vis_tete_h": 5.0,
+  "vis_crete": 0.35,
+  "vis_fond": 0.5,
+  "filet_sections_par_pas": 12,
+  "filet_points": 48,
+  "vis_pointe": 1.2,
   "vis_L_art": 11.0,
   "vis_L_collier": 20.0,
   "hexnut_h": 5.0,
@@ -247,7 +252,7 @@
   },
   "07_vis_M8_L11_x2": {
    "valide": true,
-   "volume_cm3": 1.41,
+   "volume_cm3": 1.49,
    "encombrement": [
     17.8,
     17.8,
@@ -257,31 +262,31 @@
   },
   "08_vis_M8_L20": {
    "valide": true,
-   "volume_cm3": 1.32,
+   "volume_cm3": 1.83,
    "encombrement": [
     17.8,
     17.8,
-    27.8
+    25.0
    ],
    "solides": 1
   },
   "09_ecrou_rosette_x2": {
    "valide": true,
-   "volume_cm3": 1.2,
+   "volume_cm3": 1.17,
    "encombrement": [
     21.4,
     21.4,
-    11.5
+    8.8
    ],
    "solides": 1
   },
   "10_ecrou_hex": {
    "valide": true,
-   "volume_cm3": 0.56,
+   "volume_cm3": 0.5,
    "encombrement": [
     15.0,
     13.0,
-    5.0
+    5.7
    ],
    "solides": 1
   },
@@ -297,6 +302,29 @@
   }
  },
  "verifications": {
+  "taraudage_transitions": {
+   "ecrou_rosette": 7,
+   "ecrou_hex": 5
+  },
+  "plage_phase_libre_deg": [
+   165.0,
+   165.0,
+   165.0
+  ],
+  "phase_vis_deg_et_points_de_crete_dans_ecrou": {
+   "vis_epaule": [
+    180.0,
+    0
+   ],
+   "vis_tete": [
+    180.0,
+    0
+   ],
+   "vis_collier": [
+    315.0,
+    0
+   ]
+  },
   "axe_epaule_monde": [
    0.0,
    0.0,
@@ -411,10 +439,13 @@
    ],
    "fourche_vs_ecrou_epaule": 5.086,
    "fourche_vs_vis_epaule": 0.0,
-   "vis_vs_ecrou_epaule(filets_engages)": 0.0,
+   "vis_vs_ecrou_epaule(phase_alignee)": 0.0,
+   "vis_vs_ecrou_epaule(distance_mini_mm)": 0.201,
    "fourche_vs_ecrou_tete": 4.589,
    "fourche_vs_vis_tete": 0.0,
-   "vis_vs_ecrou_tete(filets_engages)": 0.0,
+   "vis_vs_ecrou_tete(phase_alignee)": 0.0,
+   "vis_vs_ecrou_tete(distance_mini_mm)": 0.201,
+   "vis_vs_ecrou_epaule(phase+180deg)": 16.491,
    "fourche_epaule_vs_collier": 0.0,
    "fourche_tete_vs_coque": 0.0,
    "corps_vs_fourches": 0.0,
@@ -442,5 +473,5 @@
    "marge_mm": 41.6
   }
  },
- "duree_s": 77.0
+ "duree_s": 307.5
 }

@@ -193,7 +193,17 @@ Barre 24 × 8 × 124 (= `bras_L` − 26), canal 18 × 2,4 débouchant, 2 trous d
 | Écrou hexagonal 13 × 5 | 1 | collier |
 | Goupille Ø3 × 7 à tête | 4 | emmanchement corps/fourches (facultatif si collage) |
 
-Filet : profil 60° aplati, profondeur 0,9, jeu radial 0,3 (0,6 sur le diamètre), noyau Ø6. Le pas de 2 mm est délibérément « gros » : c'est ce qui rend un filet FDM fiable avec une buse 0,4.
+Filet : profil 60° aplati (crête plate 0,35, fond plat 0,5), profondeur 0,9, noyau Ø6, **jeu radial écrou 0,4** (0,8 sur le diamètre). Le pas de 2 mm est délibérément « gros » : c'est ce qui rend un filet FDM fiable avec une buse 0,4.
+
+**Construction et vérification du filetage** (correction du 30/09, à la suite de ta demande de vérifier la vis). La première version construisait le filet par balayage hélicoïdal du profil puis fusion avec le noyau : OCCT échouait silencieusement sur ce booléen et **les vis livrées étaient des cylindres lisses, les écrous des trous lisses**. La macro construit maintenant la tige filetée par **loft lisse de sections complètes** : chaque section transversale est un polygone de 48 points dont le rayon suit le profil de filet en fonction de l'angle, et la section tourne avec z (12 sections par pas). Noyau et filet forment un seul solide, sans aucun booléen fragile ; la tête est fusionnée avec 1 mm de pénétration, la pointe est conique (réduction des dernières sections). Les écrous sont obtenus par découpe d'une « vis virtuelle » majorée du jeu. Contrôles automatiques dans la macro :
+
+* présence des gorges dans chaque écrou (alternance matière/vide au rayon moyen du filet : 7 transitions sur l'écrou-rosette, 5 sur l'écrou hexagonal) ;
+* dans l'assemblage, la vis est tournée sur son axe à la phase qui centre ses crêtes dans les gorges de l'écrou (épaule 180.0°, tête 180.0°, collier 315.0°) ; volume d'interpénétration vis/écrou à cette phase : **0.0 mm³**, distance mini 0.201 mm ;
+* preuve d'existence du filet : la même vis tournée d'un demi-tour (décalage d'un demi-pas) pénètre l'écrou de **16.491 mm³**.
+
+![Vérification du filetage](renders/43_verification_filetage.png)
+
+Le lissage B-spline arrondit légèrement les angles du profil et consomme une partie du jeu aux coins : c'est pourquoi le jeu nominal est passé de 0,3 à 0,4 mm. Si l'essai d'impression (vis + écrou, 25 min) tourne trop dur, passer `vis_jeu` à 0,5 ; s'il flotte, revenir à 0,3.
 
 ---
 
@@ -224,12 +234,14 @@ Consignes de montage de la nappe :
 
 ## 8. Vérifications effectuées (automatiques, dans la macro)
 
-* **Validité géométrique** : 14 solides `isValid()` = vrai, 1 seul solide par pièce (la façade en produisait 5 avant correction des fûts d'appui).
+* **Validité géométrique** : 17 solides `isValid()` = vrai, 1 seul solide par pièce (la façade en produisait 5 avant correction des fûts d'appui).
+* **Filetage** (§ 6.6) : gorges présentes dans les deux écrous, interpénétration vis/écrou 0.0 mm³ à la phase alignée contre 16.491 mm³ à un demi-pas de décalage, distance mini 0.201 mm. Ce contrôle a été ajouté après la découverte que la première construction produisait des vis lisses.
 * **Concordance des axes** : axe local du bras sur l'axe d'épaule (0, 0, 28) ; écart axe de tête = 0,000 mm.
 * **Interférences** (volumes communs, mm³) : 0 pour épaule 0/30/60/90/100°, tête 0/30/60/90/120/135° ; fourche/collier 0 ; fourche/coque 0 ; corps/fourches 0 ; vis/oreilles 0 ; filets vis/écrou 0 (jeu 0,3 confirmé). Valeurs non nulles **attendues** : oreille/écrou-rosette ≈ 5 mm³ (dents modélisées avec 3 % de recouvrement pour la robustesse booléenne), maquette CM3/coque 0,26 mm³ (recouvrement volontaire de 0,01 mm des plots).
 * **Rayon de pliage de la nappe** (arc tangent dans la fenêtre de 22 mm) : 41 mm à 30°, 19 à 60°, 11 à 90°, 7,7 à 110°, 6,4 à 120°, 4,6 à 135°.
 * **Budget câble** : § 7.
 * **Orientation d'impression de la fourche** : vérifiée par assertion (le point le plus bas est l'ouverture du manchon).
+* **Coupes axiales de la visserie** : `freecad/verif_filetage_freecad.py` (sous `freecadcmd`) exporte les coupes, `freecad/verif_filetage_figure.py` trace la figure `renders/43_verification_filetage.png`.
 
 Non vérifié (à faire sur pièces réelles) : couple de serrage réel des vis imprimées, tenue au fluage à long terme, cotes FDM de ta machine (§ 9.3).
 
@@ -255,10 +267,10 @@ Non vérifié (à faire sur pièces réelles) : couple de serrage réel des vis 
 | `04c_goupille_x4` | 4 | tête sur le plateau | 0,1 cm³ | facultatif (colle) |
 | `05_tete_coque` | 1 | paroi haute sur le plateau, noix en haut | 8,3 cm³ | — |
 | `06_tete_facade` | 1 | face avant sur le plateau | 4,4 cm³ | l'ouverture optique donne une belle face |
-| `07_vis_M8_L11_x2` | **2** | tête sur le plateau | 1,4 cm³ | couches 0,15 |
-| `08_vis_M8_L20` | 1 | tête sur le plateau | 1,3 cm³ | couches 0,15 |
+| `07_vis_M8_L11_x2` | **2** | tête sur le plateau | 1,5 cm³ | couches 0,15 |
+| `08_vis_M8_L20` | 1 | tête sur le plateau | 1,8 cm³ | couches 0,15 |
 | `09_ecrou_rosette_x2` | **2** | hexagone sur le plateau, dents en haut | 1,2 cm³ | couches 0,15 |
-| `10_ecrou_hex` | 1 | à plat | 0,6 cm³ | couches 0,15 |
+| `10_ecrou_hex` | 1 | à plat | 0,5 cm³ | couches 0,15 |
 
 Total ≈ 83 cm³ « pleins », soit ≈ 70 à 80 g de PETG une fois remplis à 25 % ; durée totale ≈ 8 à 10 h en 0,2 mm (estimation grossière, à confirmer dans PrusaSlicer). **Aucun support** sur aucune pièce.
 
@@ -278,10 +290,10 @@ Total ≈ 83 cm³ « pleins », soit ≈ 70 à 80 g de PETG une fois remplis à 
 | PCB dans la coque | 0,3 / 0,27 par côté | `pcb_jeu_l`, `pcb_jeu_h` |
 | Jupe de façade sur épaulement | 0,15 par côté | `jupe_jeu` |
 | Hexagone dans les poches | 0,3 | `ecrou_jeu` |
-| Filet vis / écrou | 0,3 radial | `vis_jeu` |
+| Filet vis / écrou | 0,4 radial (le lissage B-spline en consomme une partie aux angles) | `vis_jeu` |
 | Alésage d'oreille / tourillon Ø8 | 0,3 | `oreille_trou` |
 
-Si ta Prusa imprime « gras » (trous étroits), augmente `vis_jeu` à 0,4 et `collier_jeu` à 0,4, puis régénère (§ 14). Si le collier ne serre pas assez : réduire `collier_jeu` ou élargir `fente_collier`.
+Si ta Prusa imprime « gras » (trous étroits), augmente `vis_jeu` à 0,5 et `collier_jeu` à 0,4, puis régénère (§ 14). Si le collier ne serre pas assez : réduire `collier_jeu` ou élargir `fente_collier`.
 
 ---
 
@@ -339,13 +351,16 @@ hardware/camera-arm/
 │   ├── bras_camera_cm3.py            ← macro FreeCAD paramétrique (dictionnaire P en tête de fichier)
 │   ├── render_stl.py                 ← rendus PNG sans OpenGL (rastériseur numpy)
 │   ├── make_renders.py               ← série de rendus de l'étude
-│   └── schemas_2d.py                 ← schémas cotés (matplotlib)
+│   ├── schemas_2d.py                 ← schémas cotés (matplotlib)
+│   ├── verif_filetage_freecad.py     ← contrôle de la visserie imprimée (coupes axiales, volumes) sous freecadcmd
+│   └── verif_filetage_figure.py      ← figure 43 à partir des coupes
 ├── export/
 │   ├── fcstd/00_assemblage.FCStd     ← toutes les pièces placées (pose par défaut) + feuille « Pose »
 │   ├── fcstd/NN_*.FCStd              ← une pièce par document + feuille « Parametres »
 │   ├── step/NN_*.step                ← STEP (repère de conception)
 │   ├── stl/NN_*.stl                  ← STL orientés pour l'impression, posés en Z = 0
 │   ├── gabarit_couvercle.dxf / .svg  ← motif de perçage du couvercle (repère : centre du fût)
+│   ├── coupes_filet.json             ← coupes axiales vis / écrous (contrôle du filetage)
 │   └── rapport.json                  ← paramètres, volumes, vérifications, budget nappe
 └── renders/*.png
 ```
@@ -367,7 +382,7 @@ Le modèle est paramétrique **par le script** (relancer = tout régénérer, y 
 | Risque | Effet | Parade |
 |---|---|---|
 | Nappe trop courte (tronçons estimés) | impossible de brancher | mesurer (§ 12), `bras_L` ou câble 500 |
-| Filet imprimé trop serré / trop lâche | vis bloquée ou écrou qui tourne | impression de calibration ; `vis_jeu` |
+| Filet imprimé trop serré / trop lâche | vis bloquée ou écrou qui tourne | impression de calibration ; `vis_jeu` (0,4 nominal, 0,3 à 0,5 selon la machine) |
 | Fluage PETG sous précontrainte | perte de serrage | rosette crantée (tenue positive) ; resserrer à 24 h |
 | Pliage de tête > 120° | rayon nappe < 6 mm | butée visuelle : ne pas dépasser le cran 8 (120°) |
 | Torsion de nappe au lacet | fatigue du polyimide | ±90°, repère sur le collier |
