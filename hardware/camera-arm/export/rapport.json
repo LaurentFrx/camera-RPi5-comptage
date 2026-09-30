@@ -1,0 +1,407 @@
+{
+ "parametres": {
+  "nappe_l": 16.0,
+  "nappe_ep": 0.3,
+  "canal_l": 18.0,
+  "canal_h": 2.4,
+  "bras_L": 150.0,
+  "bras_l": 24.0,
+  "bras_h": 8.0,
+  "excentr": 0.0,
+  "fen_demi": 11.0,
+  "noix_R": 10.0,
+  "noix_ep": 6.0,
+  "noix_gap": 18.0,
+  "noix_col": 12.0,
+  "noix_col_epaule": 16.0,
+  "oreille_ep": 4.0,
+  "oreille_R": 11.0,
+  "oreille_trou": 8.6,
+  "manchon_L": 21.0,
+  "manchon_ep": 2.8,
+  "manchon_jeu": 0.2,
+  "goupille_d": 3.2,
+  "jeu_AB": 4.0,
+  "axe_d": 8.0,
+  "boss_B_d": 16.0,
+  "boss_B_ep": 3.5,
+  "axe_long": 3.5,
+  "dents_n": 24,
+  "dents_h": 1.0,
+  "dents_r1": 6.5,
+  "dents_r2": 10.0,
+  "ecrou_hex": 13.0,
+  "ecrou_corps": 4.5,
+  "ecrou_poche": 5.0,
+  "ecrou_jeu": 0.3,
+  "ecrou_flasque_r": 10.0,
+  "vis_dmaj": 7.8,
+  "vis_pas": 2.0,
+  "vis_prof": 0.9,
+  "vis_jeu": 0.3,
+  "vis_tete_d": 18.0,
+  "vis_tete_h": 5.0,
+  "vis_L_art": 11.0,
+  "vis_L_collier": 20.0,
+  "hexnut_h": 5.0,
+  "pcb_l": 25.0,
+  "pcb_h": 23.862,
+  "pcb_ep": 1.0,
+  "pcb_jeu_l": 0.6,
+  "pcb_jeu_h": 0.5,
+  "trou_d": 2.2,
+  "trous_dx": 21.0,
+  "trous_dy": 12.5,
+  "trou_bord_haut": 2.0,
+  "objectif_c": 11.0,
+  "objectif_h": 8.0,
+  "ouverture": 13.0,
+  "ouverture_r": 3.0,
+  "connecteur_l": 20.5,
+  "connecteur_p": 5.5,
+  "connecteur_h": 3.0,
+  "nappe_z_conn": 1.2,
+  "paroi": 3.0,
+  "fond": 2.0,
+  "jeu_dos": 4.0,
+  "facade_ep": 1.5,
+  "jeu_objectif": 0.5,
+  "rebord": 2.0,
+  "plot_d": 3.6,
+  "pion_d": 1.8,
+  "pion_h": 1.0,
+  "jupe_ep": 1.2,
+  "jupe_h": 6.0,
+  "jupe_jeu": 0.15,
+  "crochet": 0.6,
+  "crochet_L": 8.0,
+  "pied_c": 46.0,
+  "pied_ep": 4.0,
+  "fente_l": 3.4,
+  "fente_L": 8.0,
+  "fente_pos": 17.0,
+  "fut_d": 26.0,
+  "fut_alesage": 20.0,
+  "fut_h": 12.5,
+  "tenon_d": 24.0,
+  "tenon_h": 3.0,
+  "bague_d": 32.0,
+  "bague_jeu": 0.1,
+  "collier_d": 34.0,
+  "collier_jeu": 0.3,
+  "collier_h": 12.0,
+  "fente_collier": 2.0,
+  "patte_L": 9.0,
+  "patte_l": 8.0,
+  "patte_h": 10.0,
+  "mur_ep": 3.0,
+  "cavalier_h": 25.0,
+  "cavalier_ep": 4.0,
+  "cavalier_int_h": 14.0,
+  "pose_lacet": 0.0,
+  "pose_epaule": 60.0,
+  "pose_tete": 120.0,
+  "cable_L": 300.0,
+  "cable_boitier": 60.0,
+  "cable_boitier_pied": 20.0
+ },
+ "derives": {
+  "Y_A": 19.0,
+  "FOURCHE_L": 46.0,
+  "TETE_L": 31.6,
+  "TETE_H": 30.362,
+  "TETE_P": 17.0,
+  "Z_AXE_EPAULE": 28.0,
+  "Y_AXE_TETE": -27.180999999999997,
+  "Z_AXE_TETE": 4.8
+ },
+ "pieces": {
+  "01_pied_plat": {
+   "valide": true,
+   "volume_cm3": 10.28,
+   "encombrement": [
+    46.0,
+    46.0,
+    19.5
+   ],
+   "solides": 1
+  },
+  "01b_cavalier_adaptateur": {
+   "valide": true,
+   "volume_cm3": 13.85,
+   "encombrement": [
+    46.0,
+    46.0,
+    29.0
+   ],
+   "solides": 1
+  },
+  "02_bague_retenue": {
+   "valide": true,
+   "volume_cm3": 1.03,
+   "encombrement": [
+    32.0,
+    32.0,
+    3.0
+   ],
+   "solides": 1
+  },
+  "03_collier_tourelle": {
+   "valide": true,
+   "volume_cm3": 10.36,
+   "encombrement": [
+    43.0,
+    39.0,
+    41.9
+   ],
+   "solides": 1
+  },
+  "04a_bras_corps_L150": {
+   "valide": true,
+   "volume_cm3": 18.35,
+   "encombrement": [
+    124.0,
+    24.0,
+    8.0
+   ],
+   "solides": 1
+  },
+  "04b_fourche_x2": {
+   "valide": true,
+   "volume_cm3": 11.39,
+   "encombrement": [
+    45.0,
+    46.0,
+    22.0
+   ],
+   "solides": 1
+  },
+  "04c_goupille_x4": {
+   "valide": true,
+   "volume_cm3": 0.08,
+   "encombrement": [
+    6.0,
+    6.0,
+    8.0
+   ],
+   "solides": 1
+  },
+  "05_tete_coque": {
+   "valide": true,
+   "volume_cm3": 8.3,
+   "encombrement": [
+    37.8,
+    52.4,
+    22.2
+   ],
+   "solides": 1
+  },
+  "06_tete_facade": {
+   "valide": true,
+   "volume_cm3": 4.36,
+   "encombrement": [
+    31.6,
+    30.4,
+    14.0
+   ],
+   "solides": 1
+  },
+  "07_vis_M8_L11_x2": {
+   "valide": true,
+   "volume_cm3": 1.41,
+   "encombrement": [
+    17.8,
+    17.8,
+    16.0
+   ],
+   "solides": 1
+  },
+  "08_vis_M8_L20": {
+   "valide": true,
+   "volume_cm3": 1.32,
+   "encombrement": [
+    17.8,
+    17.8,
+    27.8
+   ],
+   "solides": 1
+  },
+  "09_ecrou_rosette_x2": {
+   "valide": true,
+   "volume_cm3": 1.2,
+   "encombrement": [
+    21.4,
+    21.4,
+    11.5
+   ],
+   "solides": 1
+  },
+  "10_ecrou_hex": {
+   "valide": true,
+   "volume_cm3": 0.56,
+   "encombrement": [
+    15.0,
+    13.0,
+    5.0
+   ],
+   "solides": 1
+  },
+  "90_maquette_cm3": {
+   "valide": true,
+   "volume_cm3": 1.87,
+   "encombrement": [
+    25.0,
+    23.9,
+    12.0
+   ],
+   "solides": 1
+  }
+ },
+ "verifications": {
+  "axe_epaule_monde": [
+   0.0,
+   0.0,
+   28.0
+  ],
+  "axe_tete_ecart_mm": 0.0,
+  "visee_elevation_deg_et_composante_avant": {
+   "epaule45_tete60": [
+    75.0,
+    0.26
+   ],
+   "epaule45_tete90": [
+    45.0,
+    0.71
+   ],
+   "epaule45_tete120": [
+    15.0,
+    0.97
+   ],
+   "epaule45_tete150": [
+    -15.0,
+    0.97
+   ],
+   "epaule60_tete60": [
+    60.0,
+    0.5
+   ],
+   "epaule60_tete90": [
+    30.0,
+    0.87
+   ],
+   "epaule60_tete120": [
+    0.0,
+    1.0
+   ],
+   "epaule60_tete150": [
+    -30.0,
+    0.87
+   ],
+   "epaule90_tete60": [
+    30.0,
+    0.87
+   ],
+   "epaule90_tete90": [
+    0.0,
+    1.0
+   ],
+   "epaule90_tete120": [
+    -30.0,
+    0.87
+   ],
+   "epaule90_tete150": [
+    -60.0,
+    0.5
+   ]
+  },
+  "interferences_mm3": {
+   "bras_vs_base_epaule0": 0.0,
+   "bras_vs_base_epaule30": 0.0,
+   "bras_vs_base_epaule60": 0.0,
+   "bras_vs_base_epaule90": 0.0,
+   "bras_vs_base_epaule100": 0.0,
+   "bras_vs_base_epaule105": [
+    5.733,
+    [
+     -16.0,
+     -23.0,
+     12.0,
+     24.3,
+     23.0,
+     38.0
+    ]
+   ],
+   "bras_vs_base_epaule110": [
+    62.569,
+    [
+     -16.0,
+     -23.0,
+     0.0,
+     32.9,
+     23.0,
+     38.0
+    ]
+   ],
+   "bras_vs_base_epaule120": [
+    424.118,
+    [
+     -16.0,
+     -23.0,
+     -44.0,
+     120.6,
+     23.0,
+     38.0
+    ]
+   ],
+   "tete_vs_bras_beta0": 0.0,
+   "tete_vs_bras_beta30": 0.0,
+   "tete_vs_bras_beta60": 0.0,
+   "tete_vs_bras_beta90": 0.0,
+   "tete_vs_bras_beta120": 0.0,
+   "tete_vs_bras_beta135": 0.0,
+   "tete_vs_bras_beta150": [
+    416.96,
+    [
+     9.3,
+     -23.0,
+     31.0,
+     145.5,
+     23.0,
+     116.7
+    ]
+   ],
+   "fourche_vs_ecrou_epaule": 5.086,
+   "fourche_vs_vis_epaule": 0.0,
+   "vis_vs_ecrou_epaule(filets_engages)": 0.0,
+   "fourche_vs_ecrou_tete": 4.589,
+   "fourche_vs_vis_tete": 0.0,
+   "vis_vs_ecrou_tete(filets_engages)": 0.0,
+   "fourche_epaule_vs_collier": 0.0,
+   "fourche_tete_vs_coque": 0.0,
+   "corps_vs_fourches": 0.0,
+   "cm3_vs_coque+facade": 0.257
+  },
+  "rayon_pliage_nappe_mm": {
+   "beta30": 41.05,
+   "beta60": 19.05,
+   "beta90": 11.0,
+   "beta110": 7.7,
+   "beta120": 6.35,
+   "beta135": 4.56
+  },
+  "budget_nappe": {
+   "trajet": {
+    "connecteur Pi 5 → sortie du boîtier RPi (estimé, à mesurer)": 60.0,
+    "sortie boîtier → dessous de la platine (estimé, à mesurer)": 20.0,
+    "platine → axe d'épaule (fût + collier + col)": 32.0,
+    "bras (entraxe épaule → tête)": 150.0,
+    "axe tête → connecteur CM3 (col + paroi + dos PCB + insertion)": 25.4,
+    "réserve de courbure (2 charnières)": 6.0
+   },
+   "total_mm": 293.4,
+   "cable_mm": 300.0,
+   "marge_mm": 6.6
+  }
+ },
+ "duree_s": 76.5
+}
