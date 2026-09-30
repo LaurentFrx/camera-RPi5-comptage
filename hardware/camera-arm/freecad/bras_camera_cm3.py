@@ -44,7 +44,8 @@ P = dict(
     dents_n=24, dents_h=1.0, dents_r1=6.5, dents_r2=10.0,
     ecrou_hex=13.0, ecrou_corps=4.5, ecrou_poche=5.0, ecrou_jeu=0.3, ecrou_flasque_r=10.0,
     # --- visserie imprimée M8 « pas gros » 2 mm --------------------------------------------
-    vis_dmaj=7.8, vis_pas=2.0, vis_prof=0.9, vis_jeu=0.3, vis_tete_d=18.0, vis_tete_h=5.0,
+    vis_dmaj=7.8, vis_pas=2.0, vis_prof=0.9, vis_jeu=0.4, vis_tete_d=18.0, vis_tete_h=5.0,
+    vis_crete=0.35, vis_fond=0.5, filet_sections_par_pas=12, filet_points=48, vis_pointe=1.2,   # construction du filet par loft de sections
     vis_L_art=11.0, vis_L_collier=20.0, hexnut_h=5.0,
     # --- tête : Raspberry Pi Camera Module 3 (standard) -----------------------------------
     pcb_l=25.0, pcb_h=23.862, pcb_ep=1.0, pcb_jeu_l=0.6, pcb_jeu_h=0.5,
@@ -186,42 +187,73 @@ def couronne_dents(r1, r2, n, h, phase=0.0):
     ann = cyl(r2, h + 0.2, z=-0.1).cut(cyl(r1, h + 0.4, z=-0.2))
     return ring.common(ann).removeSplitter()
 
-def filetage(r_maj, pas, longueur, prof, ovl=0.35, crete=0.35, fond=0.5):
-    """Solide « vis » (noyau + filet hélicoïdal), axe Z, de z=0 à z=longueur."""
-    r_root = r_maj - prof
+def rayon_filet(u, r_maj, prof, pas, crete, fond):
+    """Rayon du filet à l'écart axial u du centre de crête : profil trapézoïdal (crête plate, flancs ~30°, fond plat)."""
     wb = pas - fond
-    prof_pts = [V(r_root - ovl, 0, -wb / 2), V(r_maj, 0, -crete / 2), V(r_maj, 0, crete / 2),
-                V(r_root - ovl, 0, wb / 2), V(r_root - ovl, 0, -wb / 2)]
-    profile = Part.Wire(Part.makePolygon(prof_pts))
-    h_tot = longueur + 2 * pas
-    helix = Part.makeHelix(pas, h_tot, r_root)
-    helix = helix if isinstance(helix, Part.Wire) else Part.Wire(helix)
-    helix.translate(V(0, 0, -pas)); profile.translate(V(0, 0, -pas))
-    sweep = helix.makePipeShell([profile], True, True)
-    if not sweep.isValid():
-        sweep.fix(0.01, 0.01, 0.01)
-    core = cyl(r_root, longueur)
-    fil = sweep.fuse(core)
-    clip = cyl(r_maj + 1.0, longueur)
-    return fil.common(clip).removeSplitter()
+    u = abs(u)
+    if u <= crete / 2:
+        return r_maj
+    if u >= wb / 2:
+        return r_maj - prof
+    return r_maj - prof * (u - crete / 2) / ((wb - crete) / 2)
+
+def section_filet(z, r_maj, prof, pas, crete, fond, N, echelle=1.0):
+    """Section transversale (plan z) de la tige filetée : polygone dont le rayon suit le profil de filet
+    en fonction de l'angle — la section tourne avec z (filet à droite)."""
+    pts = []
+    for k in range(N):
+        th = 2 * math.pi * k / N
+        u = (z - pas * th / (2 * math.pi)) % pas
+        if u > pas / 2:
+            u -= pas
+        r = rayon_filet(u, r_maj, prof, pas, crete, fond) * echelle
+        pts.append(V(r * math.cos(th), r * math.sin(th), z))
+    pts.append(pts[0])
+    return Part.makePolygon(pts)
+
+def tige_filetee(r_maj, longueur, z0=0.0, pointe=0.0):
+    """Tige filetée M(2·r_maj) pas vis_pas, de z0 à z0+longueur, construite par loft lisse de sections complètes
+    (noyau inclus : aucun booléen fragile). pointe > 0 : cône d'extrémité obtenu en réduisant les dernières sections.
+    La crête du filet passe par l'angle 0 en z = 0 (phase absolue → alignement vis/écrou calculable)."""
+    pas, prof = P["vis_pas"], P["vis_prof"]
+    n = int(round(longueur / pas * P["filet_sections_par_pas"]))
+    wires = []
+    for j in range(n + 1):
+        z = z0 + longueur * j / n
+        ech = 1.0
+        if pointe > 0 and z > z0 + longueur - pointe:
+            ech = 1.0 - 0.28 * (z - (z0 + longueur - pointe)) / pointe
+        wires.append(section_filet(z, r_maj, prof, pas, P["vis_crete"], P["vis_fond"], P["filet_points"], ech))
+    return Part.makeLoft(wires, True, False, False)
 
 def vis_molettee(L):
-    """Vis M8 pas 2 à tête moletée Ø18, fente pour pièce de monnaie. Imprimée tête en bas."""
-    tete = cyl(P["vis_tete_d"] / 2, P["vis_tete_h"])
+    """Vis M8 pas 2 à tête moletée Ø18 (12 crans) et fente pour pièce de monnaie ; tige par loft, pointe conique.
+    Imprimée tête en bas. Le filet est engagé de 1 mm dans la tête (fusion robuste)."""
+    h = P["vis_tete_h"]
+    tete = cyl(P["vis_tete_d"] / 2, h)
     for k in range(12):
-        g = cyl(1.3, P["vis_tete_h"] + 2, x=P["vis_tete_d"] / 2 + 0.2, z=-1)
+        g = cyl(1.3, h + 2, x=P["vis_tete_d"] / 2 + 0.2, z=-1)
         g.rotate(V(), V(0, 0, 1), 30 * k); tete = tete.cut(g)
-    tete = tete.cut(cbox(P["vis_tete_d"] + 2, 1.6, 2.0, cz=1.0))  # fente
-    fil = filetage(FIL_R, P["vis_pas"], L, P["vis_prof"])
-    # pointe chanfreinée
-    cone = Part.makeCone(FIL_R + 0.3, FIL_R - P["vis_prof"] - 0.2, 1.2, V(0, 0, L - 1.2))
-    fil = fil.common(fuse(cyl(FIL_R + 0.5, L - 1.2), cone))
-    fil.translate(V(0, 0, P["vis_tete_h"]))
-    return fuse(tete, fil)
+    tete = tete.cut(cbox(P["vis_tete_d"] + 2, 1.6, 2.0, cz=1.0))
+    tige = tige_filetee(FIL_R, L + 1.0, z0=h - 1.0, pointe=P["vis_pointe"])
+    vis = tete.fuse(tige).removeSplitter()
+    if not vis.isValid() or len(vis.Solids) != 1:
+        log("ATTENTION : fusion tête/tige non valide → compound"); vis = Part.makeCompound([tete, tige])
+    return vis
 
-def outil_taraudage(L):
-    """« vis virtuelle » majorée du jeu, à soustraire d'un corps pour obtenir le taraudage."""
-    return filetage(FIL_R + P["vis_jeu"], P["vis_pas"], L, P["vis_prof"])
+def outil_taraudage(L, z0=0.0):
+    """« vis virtuelle » majorée du jeu radial vis_jeu, à soustraire d'un corps pour obtenir le taraudage."""
+    return tige_filetee(FIL_R + P["vis_jeu"], L, z0=z0)
+
+def controle_taraudage(nom, ecrou, z0, z1):
+    """Vérifie qu'un écrou est bien taraudé : la matière doit alterner le long de z au rayon moyen du filet."""
+    r = FIL_R + P["vis_jeu"] - P["vis_prof"] / 2
+    ins = [ecrou.isInside(V(r, 0, z0 + (z1 - z0) * i / 60), 1e-4, True) for i in range(61)]
+    trans = sum(1 for p, q in zip(ins, ins[1:]) if p != q)
+    RAPPORT["verifications"].setdefault("taraudage_transitions", {})[nom] = trans
+    if trans < 2:
+        log(f"ATTENTION : {nom} ne présente pas de filet (transitions={trans})")
+    return trans
 
 def ecrou_rosette():
     """Écrou-rosette : corps hexagonal 13 (dans la poche de la noix), flasque conique à 45°, couronne
@@ -236,14 +268,54 @@ def ecrou_rosette():
     dents.translate(V(0, 0, h_cone + plat_h))
     body = fuse(corps, cone, plat, dents)
     L = P["ecrou_corps"] + P["jeu_AB"] + 2
-    outil = outil_taraudage(L); outil.translate(V(0, 0, -P["ecrou_corps"] - 1))
-    return cut(body, outil)
+    outil = outil_taraudage(L, z0=-P["ecrou_corps"] - 1)
+    e = cut(body, outil)
+    controle_taraudage("ecrou_rosette", e, -P["ecrou_corps"] + 0.3, P["jeu_AB"] - P["dents_h"] - 0.3)
+    return e
 
 def ecrou_hex():
     af = P["ecrou_hex"]
     body = hexprism(af, P["hexnut_h"])
-    outil = outil_taraudage(P["hexnut_h"] + 2); outil.translate(V(0, 0, -1))
-    return cut(body, outil)
+    e = cut(body, outil_taraudage(P["hexnut_h"] + 2, z0=-1))
+    controle_taraudage("ecrou_hex", e, 0.3, P["hexnut_h"] - 0.3)
+    return e
+
+def phase_vis(pl_vis, ecrou_place, L, n_test=36):
+    """Angle (°) de rotation de la vis autour de son axe pour lequel ses crêtes de filet ne pénètrent pas
+    l'écrou déjà placé : échantillonnage de points de crête (repère vis) → test d'appartenance à l'écrou."""
+    pas, h = P["vis_pas"], P["vis_tete_h"]
+    r = FIL_R - 0.05
+    zs = [h + 0.5 + (L - 1.0) * i / 24 for i in range(25)]
+    n_test = 72
+    n_in_par_phase = []
+    for k in range(n_test):
+        phi = 360.0 * k / n_test
+        pl = pl_vis.multiply(Placement(V(), Rot(V(0, 0, 1), phi)))
+        n_in = 0
+        for z in zs:
+            th = 2 * math.pi * z / pas
+            p = pl.multVec(V(r * math.cos(th), r * math.sin(th), z))
+            if ecrou_place.isInside(p, 1e-3, True):
+                n_in += 1
+        n_in_par_phase.append(n_in)
+    # centre de la plus longue plage circulaire de phases « libres » (aucune crête dans la matière de l'écrou)
+    libres = [n == 0 for n in n_in_par_phase]
+    if not any(libres):
+        k = min(range(n_test), key=lambda i: n_in_par_phase[i])
+        return 360.0 * k / n_test, n_in_par_phase[k]
+    meilleur, longueur = 0, 0
+    for start in range(n_test):
+        if libres[start] and not libres[start - 1]:
+            L_ = 0
+            while libres[(start + L_) % n_test] and L_ < n_test:
+                L_ += 1
+            if L_ > longueur:
+                meilleur, longueur = start, L_
+    if longueur >= n_test:            # toutes les phases libres (ne devrait pas arriver avec un vrai filet)
+        return 0.0, 0
+    centre = (meilleur + (longueur - 1) / 2.0) % n_test
+    RAPPORT["verifications"].setdefault("plage_phase_libre_deg", []).append(round(360.0 * longueur / n_test, 1))
+    return round(360.0 * centre / n_test, 1), 0
 
 # =============================================================================================
 # 4. NOIX (côté tête / tourelle) et FOURCHE (côté bras)
@@ -680,15 +752,22 @@ def main():
     def pl_noix_tete():
         return pl_tete.multiply(Placement(V(0, Y_AXE_TETE, Z_AXE_TETE), Rot(V(0, 0, 1), 90)))
     yA = P["noix_gap"] / 2 + P["noix_ep"]
+    phases = {}
     for nom, pln in (("epaule", pl_noix_epaule()), ("tete", pl_noix_tete())):
-        placed["ecrou_" + nom] = (pieces["09_ecrou_rosette_x2"], pln.multiply(Placement(V(0, yA, 0), Rot(V(1, 0, 0), -90))))
-        placed["vis_" + nom] = (pieces["07_vis_M8_L11_x2"],
-                                pln.multiply(Placement(V(0, OREILLE_OUT + P["vis_tete_h"], 0), Rot(V(1, 0, 0), 90))))
+        pl_e = pln.multiply(Placement(V(0, yA, 0), Rot(V(1, 0, 0), -90)))
+        placed["ecrou_" + nom] = (pieces["09_ecrou_rosette_x2"], pl_e)
+        pl_v = pln.multiply(Placement(V(0, OREILLE_OUT + P["vis_tete_h"], 0), Rot(V(1, 0, 0), 90)))
+        phi, n_in = phase_vis(pl_v, placer(pieces["09_ecrou_rosette_x2"], pl_e), P["vis_L_art"])
+        phases["vis_" + nom] = (phi, n_in)
+        placed["vis_" + nom] = (pieces["07_vis_M8_L11_x2"], pl_v.multiply(Placement(V(), Rot(V(0, 0, 1), phi))))
     ro = P["collier_d"] / 2; xv = -(ro + P["patte_L"] / 2 + 1.0); zv = P["collier_h"] / 2
-    placed["vis_collier"] = (pieces["08_vis_M8_L20"], pl_collier.multiply(
-        Placement(V(xv, -(1.0 + P["patte_l"]) - P["vis_tete_h"], zv), Rot(V(1, 0, 0), -90))))
-    placed["ecrou_collier"] = (pieces["10_ecrou_hex"], pl_collier.multiply(
-        Placement(V(xv, 1.0 + P["patte_l"] - P["ecrou_poche"] + 0.25, zv), Rot(V(1, 0, 0), -90))))
+    pl_e = pl_collier.multiply(Placement(V(xv, 1.0 + P["patte_l"] - P["ecrou_poche"] + 0.25, zv), Rot(V(1, 0, 0), -90)))
+    placed["ecrou_collier"] = (pieces["10_ecrou_hex"], pl_e)
+    pl_v = pl_collier.multiply(Placement(V(xv, -(1.0 + P["patte_l"]) - P["vis_tete_h"], zv), Rot(V(1, 0, 0), -90)))
+    phi, n_in = phase_vis(pl_v, placer(pieces["10_ecrou_hex"], pl_e), P["vis_L_collier"])
+    phases["vis_collier"] = (phi, n_in)
+    placed["vis_collier"] = (pieces["08_vis_M8_L20"], pl_v.multiply(Placement(V(), Rot(V(0, 0, 1), phi))))
+    RAPPORT["verifications"]["phase_vis_deg_et_points_de_crete_dans_ecrou"] = phases
     # goupilles (4) : tête à l'extérieur des manchons
     for nom, plf in (("epaule", pl_f1), ("tete", pl_f2)):
         for s in (+1, -1):
@@ -761,13 +840,18 @@ def main():
         t = fuse(placer(pieces["05_tete_coque"], plt), placer(pieces["06_tete_facade"], plt))
         inter[f"tete_vs_bras_beta{be}"] = com(b60, t)
     # visserie vs fourches (état serré) et écrou vs noix
-    for nom, pln, plf in (("epaule", pl_noix_epaule(), pl_f1), ("tete", pl_noix_tete(), pl_f2)):
+    for nom, plf in (("epaule", pl_f1), ("tete", pl_f2)):
         fk = placer(pieces["04b_fourche_x2"], plf)
-        ec = placer(pieces["09_ecrou_rosette_x2"], pln.multiply(Placement(V(0, yA, 0), Rot(V(1, 0, 0), -90))))
-        vi = placer(pieces["07_vis_M8_L11_x2"], pln.multiply(Placement(V(0, OREILLE_OUT + P["vis_tete_h"], 0), Rot(V(1, 0, 0), 90))))
+        ec = placer(*placed["ecrou_" + nom])
+        vi = placer(*placed["vis_" + nom])
         inter[f"fourche_vs_ecrou_{nom}"] = round(fk.common(ec).Volume, 3)
         inter[f"fourche_vs_vis_{nom}"] = round(fk.common(vi).Volume, 3)
-        inter[f"vis_vs_ecrou_{nom}(filets_engages)"] = round(vi.common(ec).Volume, 3)
+        inter[f"vis_vs_ecrou_{nom}(phase_alignee)"] = round(vi.common(ec).Volume, 3)
+        inter[f"vis_vs_ecrou_{nom}(distance_mini_mm)"] = round(vi.distToShape(ec)[0], 3)
+    # preuve de l'existence du filet : la même vis tournée d'un demi-tour (décalage d'un demi-pas) doit pénétrer l'écrou
+    s_, pl_ = placed["vis_epaule"]
+    vi180 = placer(s_, pl_.multiply(Placement(V(), Rot(V(0, 0, 1), 180))))
+    inter["vis_vs_ecrou_epaule(phase+180deg)"] = round(vi180.common(placer(*placed["ecrou_epaule"])).Volume, 3)
     inter["fourche_epaule_vs_collier"] = round(placer(pieces["04b_fourche_x2"], pl_f1).common(placer(pieces["03_collier_tourelle"], pl_collier)).Volume, 3)
     inter["fourche_tete_vs_coque"] = com(placer(pieces["04b_fourche_x2"], pl_f2), placer(pieces["05_tete_coque"], pl_tete))
     inter["corps_vs_fourches"] = round(placer(pieces[corps_key], pl_corps).common(
