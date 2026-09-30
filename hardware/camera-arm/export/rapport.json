@@ -80,6 +80,15 @@
   "fente_l": 3.4,
   "fente_L": 8.0,
   "fente_pos": 17.0,
+  "pied_cx": 50.0,
+  "pied_cy": 46.0,
+  "pied_decal": 10.0,
+  "fente_x": 19.0,
+  "fente_y_av": -8.0,
+  "fente_y_ar": 24.0,
+  "couvercle_trou": 22.0,
+  "gabarit_ep": 1.2,
+  "bras_L_alt": 170.0,
   "fut_d": 26.0,
   "fut_alesage": 20.0,
   "fut_h": 12.5,
@@ -102,8 +111,8 @@
   "pose_epaule": 60.0,
   "pose_tete": 120.0,
   "cable_L": 300.0,
-  "cable_boitier": 60.0,
-  "cable_boitier_pied": 20.0
+  "cable_boitier": 45.0,
+  "cable_boitier_pied": 0.0
  },
  "derives": {
   "Y_A": 19.0,
@@ -116,7 +125,17 @@
   "Z_AXE_TETE": 4.8
  },
  "pieces": {
-  "01_pied_plat": {
+  "01_pied_couvercle": {
+   "valide": true,
+   "volume_cm3": 10.97,
+   "encombrement": [
+    50.0,
+    49.0,
+    19.5
+   ],
+   "solides": 1
+  },
+  "01a_pied_plat_centre": {
    "valide": true,
    "volume_cm3": 10.28,
    "encombrement": [
@@ -133,6 +152,16 @@
     46.0,
     46.0,
     29.0
+   ],
+   "solides": 1
+  },
+  "01c_gabarit_percage_couvercle": {
+   "valide": true,
+   "volume_cm3": 2.24,
+   "encombrement": [
+    50.0,
+    46.0,
+    1.2
    ],
    "solides": 1
   },
@@ -161,6 +190,16 @@
    "volume_cm3": 18.35,
    "encombrement": [
     124.0,
+    24.0,
+    8.0
+   ],
+   "solides": 1
+  },
+  "04a_bras_corps_L170_alt": {
+   "valide": true,
+   "volume_cm3": 21.33,
+   "encombrement": [
+    144.0,
     24.0,
     8.0
    ],
@@ -391,17 +430,17 @@
   },
   "budget_nappe": {
    "trajet": {
-    "connecteur Pi 5 → sortie du boîtier RPi (estimé, à mesurer)": 60.0,
-    "sortie boîtier → dessous de la platine (estimé, à mesurer)": 20.0,
+    "connecteur CAM Pi 5 → couvercle (≈ 35 mm mesurés sur photo + coude + insertion)": 45.0,
+    "couvercle → dessous de la platine (platine posée sur le couvercle)": 0.0,
     "platine → axe d'épaule (fût + collier + col)": 32.0,
     "bras (entraxe épaule → tête)": 150.0,
     "axe tête → connecteur CM3 (col + paroi + dos PCB + insertion)": 25.4,
     "réserve de courbure (2 charnières)": 6.0
    },
-   "total_mm": 293.4,
+   "total_mm": 258.4,
    "cable_mm": 300.0,
-   "marge_mm": 6.6
+   "marge_mm": 41.6
   }
  },
- "duree_s": 76.5
+ "duree_s": 77.0
 }

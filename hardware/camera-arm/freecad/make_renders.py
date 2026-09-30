@@ -98,11 +98,14 @@ go("10_tete_facade_interieur", {"view": [-60, -50], "scale_bar_mm": 10,
 
 # ---- 5. pièces seules, orientation d'impression (plateau = z = 0) -------------------------------
 pieces = [
-    ("01_pied_plat", "Pied plat : platine 46×46×4, 4 fentes 3,4×8, fût creux Ø26/Ø20, tenon Ø24 — imprimé tel quel"),
-    ("01b_cavalier_adaptateur", "Adaptateur cavalier (variante) — imprimé retourné, joues vers le haut"),
+    ("01_pied_couvercle", "Pied pour couvercle : platine 50×46 décalée (bord affleurant la paroi), 4 fentes 3,4×8, fût creux Ø26/Ø20 — imprimé tel quel"),
+    ("01c_gabarit_percage_couvercle", "Gabarit de perçage du couvercle (plaque 1,2 mm) : trou nappe Ø22 + 4 trous Ø3,4 — à poser sur le couvercle"),
+    ("01a_pied_plat_centre", "Variante : platine 46×46 centrée sur le fût"),
+    ("01b_cavalier_adaptateur", "Variante : adaptateur cavalier — imprimé retourné, joues vers le haut"),
     ("02_bague_retenue", "Bague de retenue Ø32/Ø24,1 × 3 — emmanchée (ou collée) sur le tenon"),
     ("03_collier_tourelle", "Collier-tourelle : anneau fendu Ø34/Ø26,3 × 12, pattes de serrage, noix d'épaule — imprimé debout"),
-    ("04a_bras_corps_L150", "Corps de bras 124 × 24 × 8, canal 18 × 2,4 traversant — imprimé à plat (pont de 18 mm)"),
+    ("04a_bras_corps_L150", "Corps de bras 124 × 24 × 8 (entraxe 150), canal 18 × 2,4 traversant — imprimé à plat (pont de 18 mm)"),
+    ("04a_bras_corps_L170_alt", "Corps de bras alternatif 144 × 24 × 8 (entraxe 170) — si la mesure de nappe le permet"),
     ("04b_fourche_x2", "Fourche (×2) — imprimée debout sur l'ouverture du manchon : oreilles verticales, crantage sans surplomb"),
     ("05_tete_coque", "Coque de tête — imprimée sur sa paroi haute, noix vers le haut"),
     ("06_tete_facade", "Façade — imprimée face avant sur le plateau"),
@@ -126,7 +129,7 @@ x = 0.0; row_y = 0.0; row_h = 0.0; col_w = 0
 from render_stl import load_stl
 for n, _ in pieces:
     f = os.path.join(S, n + ".stl")
-    if not os.path.exists(f):
+    if not os.path.exists(f) or n in ("01a_pied_plat_centre", "01b_cavalier_adaptateur", "04a_bras_corps_L170_alt"):
         continue
     V = load_stl(f); bb = V.reshape(-1, 3)
     w, h = bb[:, 0].max() - bb[:, 0].min(), bb[:, 1].max() - bb[:, 1].min()
@@ -135,5 +138,5 @@ for n, _ in pieces:
     plate.append({"file": f, "color": [0.80, 0.80, 0.82], "transform": T(x - bb[:, 0].min(), row_y - bb[:, 1].min(), 0)})
     x += w + 12; row_h = max(row_h, h)
 go("30_planche_impression", {"view": [-70, 40], "parts": plate, "scale_bar_mm": 50, "width": 1800, "height": 1100,
-    "title": "Toutes les pièces à imprimer, dans leur orientation d'impression (1 corps, 2 fourches, 2 vis L11, 2 écrous-rosette, 4 goupilles)"})
+    "title": "Kit à imprimer (orientation d'impression) : pied couvercle, gabarit, bague, collier, corps L150, 2 fourches, coque, façade, 2 vis L11, vis L20, 2 écrous-rosette, écrou hex, 4 goupilles"})
 print("terminé")

@@ -56,6 +56,8 @@ P = dict(
     jupe_ep=1.2, jupe_h=6.0, jupe_jeu=0.15, crochet=0.6, crochet_L=8.0,
     # --- pied, fût creux, collier-tourelle ----------------------------------------------------
     pied_c=46.0, pied_ep=4.0, fente_l=3.4, fente_L=8.0, fente_pos=17.0,
+    pied_cx=50.0, pied_cy=46.0, pied_decal=10.0, fente_x=19.0, fente_y_av=-8.0, fente_y_ar=24.0,   # pied « couvercle » : fût décalé vers le bord
+    couvercle_trou=22.0, gabarit_ep=1.2, bras_L_alt=170.0,
     fut_d=26.0, fut_alesage=20.0, fut_h=12.5, tenon_d=24.0, tenon_h=3.0, bague_d=32.0, bague_jeu=0.1,
     collier_d=34.0, collier_jeu=0.3, collier_h=12.0, fente_collier=2.0,
     patte_L=9.0, patte_l=8.0, patte_h=10.0,
@@ -63,7 +65,7 @@ P = dict(
     # --- pose d'assemblage par défaut ---------------------------------------------------------
     pose_lacet=0.0, pose_epaule=60.0, pose_tete=120.0,
     # --- budget câble ------------------------------------------------------------------------
-    cable_L=300.0, cable_boitier=60.0, cable_boitier_pied=20.0,
+    cable_L=300.0, cable_boitier=45.0, cable_boitier_pied=0.0,   # mesuré sur photo : connecteur CAM ≈ 35 mm sous le bord ; platine posée sur le couvercle
 )
 
 # grandeurs dérivées
@@ -343,7 +345,61 @@ def piece_goupille():
     g = fuse(cyl(P["goupille_d"] / 2 - 0.15, 6.8), cyl(3.0, 1.2, z=6.8))
     return g
 
-def piece_pied_plat():
+def piece_pied_couvercle():
+    """Pied pour fixation sur couvercle : fût creux à l'origine, platine pied_cx × pied_cy décalée de pied_decal vers +y
+    (le bord -y de la platine affleure la face extérieure de la paroi du boîtier ; la nappe monte à 16 mm du bord).
+    4 fentes 3,4 × 8 (vis M3 ou goupilles collées)."""
+    cx, cy, ep = P["pied_cx"], P["pied_cy"], P["pied_ep"]
+    pl = rrect(cx, cy, ep, 4.0, cy=P["pied_decal"], z0=-ep)
+    for sx in (+1, -1):
+        for yy in (P["fente_y_av"], P["fente_y_ar"]):
+            pl = pl.cut(rrect(P["fente_l"], P["fente_L"], ep + 2, P["fente_l"] / 2 - 0.01, sx * P["fente_x"], yy, -ep - 1))
+    fut = cyl(P["fut_d"] / 2, P["fut_h"])
+    tenon = cyl(P["tenon_d"] / 2, P["tenon_h"], z=P["fut_h"])
+    conge = Part.makeCone(P["fut_d"] / 2 + 3, P["fut_d"] / 2, 3.0)
+    conge = conge.common(box(cx, cy, 10, -cx / 2, P["pied_decal"] - cy / 2, -1))   # le congé ne déborde pas de la platine
+    pied = fuse(pl, fut, tenon, conge)
+    return cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30))
+
+def gabarit_couvercle_2d():
+    """Motif de perçage du couvercle (repère : centre du fût) : contour de platine, trou nappe, 4 trous de vis."""
+    cx, cy, d = P["pied_cx"], P["pied_cy"], P["pied_decal"]
+    trous = [(sx * P["fente_x"], yy, 3.4) for sx in (+1, -1) for yy in (P["fente_y_av"], P["fente_y_ar"])]
+    return dict(contour=(-cx / 2, d - cy / 2, cx / 2, d + cy / 2), nappe=(0.0, 0.0, P["couvercle_trou"]), vis=trous)
+
+def piece_gabarit_couvercle():
+    """Gabarit de perçage imprimable (plaque 1,2 mm) : à poser sur le couvercle pour pointer les 5 trous."""
+    g = gabarit_couvercle_2d(); x0, y0, x1, y1 = g["contour"]
+    pl = rrect(x1 - x0, y1 - y0, P["gabarit_ep"], 4.0, cy=(y0 + y1) / 2)
+    pl = pl.cut(cyl(g["nappe"][2] / 2, 10, z=-5))
+    for x, y, dia in g["vis"]:
+        pl = pl.cut(cyl(dia / 2, 10, x, y, -5))
+    return pl.removeSplitter()
+
+def ecrire_gabarit_dxf_svg(dossier):
+    g = gabarit_couvercle_2d(); x0, y0, x1, y1 = g["contour"]
+    cercles = [g["nappe"]] + g["vis"]
+    # DXF R12 minimal (mm)
+    L = ["0", "SECTION", "2", "ENTITIES"]
+    for (ax, ay, bx, by) in [(x0, y0, x1, y0), (x1, y0, x1, y1), (x1, y1, x0, y1), (x0, y1, x0, y0)]:
+        L += ["0", "LINE", "8", "CONTOUR", "10", f"{ax:.3f}", "20", f"{ay:.3f}", "30", "0", "11", f"{bx:.3f}", "21", f"{by:.3f}", "31", "0"]
+    for (x, y, dia) in cercles:
+        L += ["0", "CIRCLE", "8", "TROUS", "10", f"{x:.3f}", "20", f"{y:.3f}", "30", "0", "40", f"{dia / 2:.3f}"]
+    L += ["0", "ENDSEC", "0", "EOF"]
+    with open(os.path.join(dossier, "gabarit_couvercle.dxf"), "w") as fh:
+        fh.write("\n".join(L) + "\n")
+    w, h = x1 - x0, y1 - y0
+    S = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}mm" height="{h}mm" viewBox="{x0} {-y1} {w} {h}">',
+         f'<rect x="{x0}" y="{-y1}" width="{w}" height="{h}" rx="4" fill="none" stroke="black" stroke-width="0.3"/>']
+    for (x, y, dia) in cercles:
+        S.append(f'<circle cx="{x}" cy="{-y}" r="{dia / 2}" fill="none" stroke="black" stroke-width="0.3"/>')
+        S.append(f'<text x="{x + dia / 2 + 1}" y="{-y}" font-size="2.2" font-family="sans-serif">Ø{dia:g}</text>')
+    S.append("</svg>")
+    with open(os.path.join(dossier, "gabarit_couvercle.svg"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join(S) + "\n")
+
+def piece_pied_plat_centre():
+    """Variante : platine carrée 46 × 46 centrée sur le fût (surface d'accueil large)."""
     c, ep = P["pied_c"], P["pied_ep"]
     pl = rrect(c, c, ep, 4.0, z0=-ep)
     for sx in (+1, -1):
@@ -534,11 +590,15 @@ def main():
     pieces = {}
     log("génération des pièces…")
     corps_key = "04a_bras_corps_L%d" % int(L)
-    pieces["01_pied_plat"] = piece_pied_plat()
+    pieces["01_pied_couvercle"] = piece_pied_couvercle()
+    pieces["01a_pied_plat_centre"] = piece_pied_plat_centre()
     pieces["01b_cavalier_adaptateur"] = piece_cavalier_adaptateur()
+    pieces["01c_gabarit_percage_couvercle"] = piece_gabarit_couvercle()
+    ecrire_gabarit_dxf_svg(OUT)
     pieces["02_bague_retenue"] = piece_bague()
     pieces["03_collier_tourelle"] = piece_collier()
     pieces[corps_key] = piece_bras_corps(L)
+    pieces["04a_bras_corps_L%d_alt" % int(P["bras_L_alt"])] = piece_bras_corps(P["bras_L_alt"])
     pieces["04b_fourche_x2"] = piece_fourche()
     pieces["04c_goupille_x4"] = piece_goupille()
     pieces["05_tete_coque"] = piece_tete_coque()
@@ -552,7 +612,7 @@ def main():
         infos(k, s)
 
     orient = {
-        "01_pied_plat": Placement(),
+        "01_pied_couvercle": Placement(), "01a_pied_plat_centre": Placement(), "01c_gabarit_percage_couvercle": Placement(),
         "01b_cavalier_adaptateur": Placement(V(), Rot(V(1, 0, 0), 180)),   # platine sur le plateau, joues en haut
         "02_bague_retenue": Placement(),
         "03_collier_tourelle": Placement(),
@@ -572,7 +632,9 @@ def main():
     assert abs(fk_o.BoundBox.ZMin - X_MANCHON0) < 1e-6, fk_o.BoundBox
     # écrou-rosette : corps hexagonal vers le bas (z<0 dans son repère) → déjà « tête en haut » : dents vers le haut
     desc = {
-        "01_pied_plat": "Platine 46x46, 4 fentes 3,4x8 (vis M3 ou goupilles), fût creux Ø26/Ø20 (passage nappe), tenon Ø24",
+        "01_pied_couvercle": "Pied pour couvercle : platine 50x46 décalée (bord affleurant la paroi), 4 fentes 3,4x8, fût creux Ø26/Ø20, tenon Ø24",
+        "01a_pied_plat_centre": "Variante : platine 46x46 centrée sur le fût",
+        "01c_gabarit_percage_couvercle": "Gabarit de perçage du couvercle (plaque 1,2 mm) : trou nappe Ø22 + 4 trous Ø3,4",
         "01b_cavalier_adaptateur": "Adaptateur à cheval sur une paroi verticale (mur_ep) recevant le pied plat (2 trous Ø3,4)",
         "02_bague_retenue": "Bague emmanchée/collée sur le tenon : retient axialement le collier (jeu 0,5)",
         "03_collier_tourelle": "Collier fendu de lacet (serrage par vis imprimée M8) portant la noix d'épaule",
@@ -602,7 +664,7 @@ def main():
     pl_f2 = pl_bras.multiply(Placement(V(L, 0, 0), Rot()))
     pl_corps = pl_bras.multiply(Placement(V(-X_FOND_MANCHON, 0, 0), Rot()))
     placed = {
-        "pied": (pieces["01_pied_plat"], Placement()),
+        "pied": (pieces["01_pied_couvercle"], Placement()),
         "bague": (pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
         "collier": (pieces["03_collier_tourelle"], pl_collier),
         "bras_corps": (pieces[corps_key], pl_corps),
@@ -645,7 +707,7 @@ def main():
     for pose_nom, (ps_, th_, be_) in {"repos": (0, 0, 0), "horizontal": (0, 90, 90), "lacet45": (45, 60, 120), "plongee": (0, 90, 150)}.items():
         d_ = os.path.join(OUT, "stl_assemblage", "pose_" + pose_nom); os.makedirs(d_, exist_ok=True)
         plb_ = placement_bras(ps_, th_); plt_ = placement_tete(plb_, L, be_); plc_ = Placement(V(), Rot(V(0, 0, 1), ps_))
-        sub = {"pied": (pieces["01_pied_plat"], Placement()), "bague": (pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
+        sub = {"pied": (pieces["01_pied_couvercle"], Placement()), "bague": (pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
                "collier": (pieces["03_collier_tourelle"], plc_), "bras_corps": (pieces[corps_key], plb_.multiply(Placement(V(-X_FOND_MANCHON, 0, 0), Rot()))),
                "fourche_epaule": (pieces["04b_fourche_x2"], plb_.multiply(Placement(V(), Rot(V(0, 1, 0), 180)))),
                "fourche_tete": (pieces["04b_fourche_x2"], plb_.multiply(Placement(V(L, 0, 0), Rot()))),
@@ -674,7 +736,7 @@ def main():
         return round(math.degrees(math.asin(max(-1, min(1, d.z)))), 1), round(d.x, 2)
     verif["visee_elevation_deg_et_composante_avant"] = {f"epaule{th}_tete{be}": visee(th, be)
                                                         for th in (45, 60, 90) for be in (60, 90, 120, 150)}
-    fixe = fuse(placer(pieces["01_pied_plat"], Placement()),
+    fixe = fuse(placer(pieces["01_pied_couvercle"], Placement()),
                 placer(pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
                 placer(pieces["03_collier_tourelle"], pl_collier))
     def bras_complet(plb):
@@ -722,8 +784,8 @@ def main():
         rayons[f"beta{be}"] = round(corde / (2 * math.sin(b / 2)), 2)
     verif["rayon_pliage_nappe_mm"] = rayons
     trajet = {  # noqa
-        "connecteur Pi 5 → sortie du boîtier RPi (estimé, à mesurer)": P["cable_boitier"],
-        "sortie boîtier → dessous de la platine (estimé, à mesurer)": P["cable_boitier_pied"],
+        "connecteur CAM Pi 5 → couvercle (≈ 35 mm mesurés sur photo + coude + insertion)": P["cable_boitier"],
+        "couvercle → dessous de la platine (platine posée sur le couvercle)": P["cable_boitier_pied"],
         "platine → axe d'épaule (fût + collier + col)": P["pied_ep"] + Z_AXE_EPAULE,
         "bras (entraxe épaule → tête)": L,
         "axe tête → connecteur CM3 (col + paroi + dos PCB + insertion)": round(P["noix_col"] + P["paroi"] + (P["pcb_h"] / 2 - P["connecteur_p"]) + 4.0, 1),

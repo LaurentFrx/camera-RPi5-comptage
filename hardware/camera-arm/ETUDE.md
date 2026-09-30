@@ -19,12 +19,12 @@
 | Lacet | Collier fendu serré sur le fût par la même vis imprimée, bague de retenue emmanchée | Réglage continu 360° (limité par la torsion de nappe : ±90° conseillé), aucun filetage de grand diamètre à imprimer. |
 | Bras | **Deux pièces** : corps plat 24 × 8 (longueur paramétrable) + 2 fourches identiques emmanchées 21 mm | Chaque pièce s'imprime **sans support** ; changer la longueur = réimprimer le seul corps. |
 | Tête caméra | Coque + façade encliquetée ; PCB pris en **sandwich** sur ses 4 trous (plots + pions Ø1,8 à l'arrière, fûts à l'avant) | Zéro vis M2 ; respect de la zone interdite du flex autofocus. |
-| Fixation au boîtier RPi5 | Platine 46 × 46 à 4 fentes (2 à 4 vis M3 **ou** goupilles imprimées collées) ; variante adaptateur « cavalier » à cheval sur une paroi | Le boîtier exact n'est pas connu : interface volontairement générique et paramétrée (§ 12). |
+| Fixation au boîtier RPi5 | **Sur le couvercle** : pied à platine 50 × 46 dont le fût est décalé vers le bord (la platine affleure la paroi, la nappe monte à 16 mm du bord), 4 fentes 3,4 × 8 (2 à 4 vis M3 **ou** goupilles imprimées collées), trou Ø22 dans le couvercle sous le fût ; gabarit de perçage imprimable + DXF/SVG. Variantes : platine centrée, adaptateur « cavalier ». | Décision utilisateur du 30/09 : fixation sur couvercle. |
 | Quincaillerie métallique | **Zéro par défaut**. Optionnel : 2 à 4 vis M3 pour la platine si tu préfères aux goupilles collées | Demande explicite du cahier des charges. |
 
 **Plages validées par calcul d'interférences (aucune collision)** : épaule 0 → 100° depuis la verticale ; tête 0 → 135° de pliage ; lacet 360°. Plages **recommandées** (rayon de pliage de la nappe ≥ 6 mm) : épaule 0 → 95°, tête 0 → 120°.
 
-**Budget câble** (nappe officielle Standard–Mini 300 mm, entraxe de bras 150 mm) : 293 mm consommés, **6,6 mm de marge** avec deux tronçons *estimés* dans le boîtier Pi. À mesurer avant impression (§ 12) ; l'entraxe est un paramètre (`bras_L`).
+**Budget câble** (nappe officielle Standard–Mini 300 mm, entraxe de bras 150 mm, platine posée sur le couvercle) : 258 mm consommés, **≈ 42 mm de marge** ; le tronçon dans le boîtier Pi (≈ 35 mm mesurés sur la photo du 30/09 + coude + insertion = 45 mm) reste à confirmer au montage. Un corps de bras alternatif d'entraxe **170 mm** est fourni (marge ≈ 22 mm).
 
 ---
 
@@ -35,7 +35,7 @@
 | **Raspberry Pi Camera Module 3** standard (autofocus IMX708, objectif carré ~11 mm, flex VCM noir remontant vers le bord haut). | Contour PCB 25,0 × 23,86 mm, 4 trous Ø2,2 à 21 × 12,5 mm, trous hauts à 2 mm du bord haut ; centre optique sur la ligne des trous bas, centré en largeur ; hauteur d'objectif ≈ 8 mm au-dessus du PCB (12,4 − 1 − 3). Module 3 **Wide** : objectif ≈ 9 mm → paramètre `objectif_h`. |
 | Connecteur nappe **15 broches 1 mm** au dos, sur le bord bas ; nappe sortant vers le bas dans le plan de la carte ; composants dos ≤ 1,5 mm, connecteur ≈ 3 mm. | Dégagement dos 4 mm ; plan de nappe à 1,2 mm derrière le dos du PCB ; fente 18 × 2,4 dans la paroi basse de la coque. |
 | Câble **« Raspberry Pi Camera Cable Standard – Mini 300 mm »** : 16 mm de large côté caméra, ~12 mm côté Pi 5 (22 broches 0,5 mm). | Canal et fenêtres de 18 mm ; on enfile l'extrémité **Mini** (étroite) depuis la tête vers le pied. |
-| **Pi 5 + AI HAT+ (Hailo)** dans un boîtier imprimé noir à fentes d'aération verticales, dessus ouvert, parois ≈ 3 mm ; la nappe sort par le dessus. | Interface de fixation générique + variante cavalier (`mur_ep` = 3 par défaut). Les connecteurs CAM/DISP du Pi 5 sont sur le bord des micro-HDMI ; **position exacte de la sortie à relever sur ton boîtier** (le site raspberrypi.com était bloqué par le proxy de la session, je n'ai pas pu vérifier le plan mécanique du Pi 5). |
+| **Pi 5 + AI HAT+ (Hailo)** dans un boîtier imprimé noir à fentes d'aération verticales, parois ≈ 3 mm ; la nappe sort par le dessus ; **un couvercle recevra le pied** (décision du 30/09). Sur la photo au mètre-ruban, le connecteur CAM se situe ≈ 35 mm sous le bord du boîtier, le long d'une paroi longue. | Pied « couvercle » à fût décalé (`pied_decal` = 10) : platine affleurant la paroi, trou nappe Ø22 dans le couvercle à 16 mm du bord extérieur ; gabarit de perçage fourni (STL, DXF, SVG). Variante cavalier conservée (`mur_ep` = 3). |
 
 Autres hypothèses : PETG (fluage faible, tenace) ; buse 0,4 ; couches 0,2 (0,15 pour la visserie) ; retrait/élargissement FDM typique de 0,1 à 0,2 mm sur les trous, compensé par les jeux listés au § 9.
 
@@ -92,7 +92,7 @@ Conséquence : oreilles symétriques (±11 mm autour de l'axe), donc bras en **d
 | Option | Verdict |
 |---|---|
 | Vissage direct dans le chant d'une paroi de 3 mm | impossible (trop mince) |
-| **Platine 4 fentes** sur un couvercle / une surface plane, vis M3 ou goupilles imprimées collées | **retenue par défaut** (générique) |
+| **Platine 4 fentes sur le couvercle**, fût décalé vers le bord, vis M3 ou goupilles imprimées collées, trou Ø22 sous le fût | **retenue** (décision du 30/09) |
 | **Adaptateur cavalier** à cheval sur une paroi, 2 trous traversant les fentes d'aération | **fournie en variante** (`01b_cavalier_adaptateur`) |
 | Écrou-tenon dans une fente d'aération (boulon imprimé plat) | à étudier une fois la largeur des fentes mesurée |
 
@@ -166,7 +166,8 @@ Barre 24 × 8 × 124 (= `bras_L` − 26), canal 18 × 2,4 débouchant, 2 trous d
 
 ![Collier](renders/20_piece_03_collier_tourelle.png)
 
-* **Pied plat** : platine 46 × 46 × 4, 4 fentes 3,4 × 8 (entraxe 34 × 34, réglage ±4), fût Ø26 h 12,5 + congé, tenon Ø24 h 3, alésage Ø20 (la nappe de 16 mm y passe à plat et peut se tordre).
+* **Pied couvercle** (`01_pied_couvercle`) : platine 50 × 46 × 4 dont le fût est décalé de 10 mm vers le bord −y (bord de platine à 16 mm de l'axe du fût = rayon du congé) ; 4 fentes 3,4 × 8 en (±19, −8) et (±19, +24) ; fût Ø26 h 12,5 + congé, tenon Ø24 h 3, alésage Ø20 (la nappe de 16 mm y passe à plat et peut se tordre). Pose : bord −y de la platine affleurant la face extérieure de la paroi du boîtier côté connecteur CAM ; **trou Ø22 dans le couvercle** sous le fût, donc à 16 mm du bord extérieur du boîtier, et 4 trous Ø3,4 (ou 2 seulement) aux fentes. Le **gabarit** `01c_gabarit_percage_couvercle` (plaque 1,2 mm au contour de la platine, percée des 5 trous) se pose sur le couvercle pour pointer ; le même motif est fourni en `export/gabarit_couvercle.dxf` et `.svg` pour l'intégrer directement dans la CAO du couvercle.
+* **Variante platine centrée** (`01a_pied_plat_centre`) : 46 × 46, fentes en (±17, ±17), pour une surface d'accueil large.
 * **Bague de retenue** Ø32 / Ø24,1 × 3 : emmanchée (une goutte de colle) sur le tenon, elle emprisonne axialement le collier (jeu 0,5). Le collier se met en place **avant** la bague.
 * **Collier-tourelle** : anneau Ø34 / Ø26,3 × 12, fente 2 mm, deux pattes 8 × 9 × 10 (poche hexagonale d'un côté, passage Ø8,6 de l'autre) serrées par la vis M8 × 20 + écrou hexagonal 13 × 5 ; la noix d'épaule (2 plaques R10, gap 18, col 16) est sur le dessus. Le serrage du collier fige le lacet par friction sur le fût (couple de tenue ≈ 0,4 N·m avec 100 N de serrage, très supérieur aux sollicitations d'une caméra fixe).
 * **Adaptateur cavalier** (variante) : platine 46 × 46 × 4 à cheval sur une paroi de `mur_ep` = 3 (+0,4 de jeu) ; joue extérieure 25 mm, intérieure 14 mm (paramètres), 2 trous Ø3,4 pour pincer la paroi à travers les fentes d'aération, 2 trous Ø3,4 recevant le pied plat, passage Ø22 pour la nappe. Imprimé retourné.
@@ -202,15 +203,15 @@ Filet : profil 60° aplati, profondeur 0,9, jeu radial 0,3 (0,6 sur le diamètre
 
 | Tronçon | mm | Statut |
 |---|---|---|
-| Connecteur CAM du Pi 5 → sortie du boîtier (au-dessus du HAT) | 60 | **estimé — à mesurer** |
-| Sortie du boîtier → dessous de la platine | 20 | **estimé — à mesurer** |
+| Connecteur CAM du Pi 5 → couvercle (≈ 35 mm mesurés + coude + insertion) | 45 | mesuré sur photo, à confirmer |
+| Couvercle → dessous de la platine (platine posée sur le couvercle) | 0 | — |
 | Platine → axe d'épaule (fût + collier + col) | 32 | calculé |
 | Bras (entraxe) | 150 | paramètre |
 | Axe de tête → connecteur CM3 (col + paroi + dos + insertion) | 25,4 | calculé |
 | Réserve de courbure aux deux charnières | 6 | calculé |
-| **Total** | **293,4** | **marge 6,6 mm** sur 300 |
+| **Total** | **258,4** | **marge 41,6 mm** sur 300 (21,6 mm avec le corps de 170) |
 
-Décision à prendre après mesure : si les deux tronçons estimés dépassent 86 mm au total, réduire `bras_L` (130 → +20 mm de marge) **ou** passer au câble officiel Standard–Mini **500 mm** (alors `bras_L` jusqu'à ≈ 330, ou deux segments + coude, § 13).
+Deux corps de bras sont fournis : **150** (marge ≈ 42 mm, recommandé pour la première impression) et **170** (`04a_bras_corps_L170_alt`, marge ≈ 22 mm). Au-delà, passer au câble officiel Standard–Mini **500 mm** (alors `bras_L` jusqu'à ≈ 330, ou deux segments + coude, § 13).
 
 Consignes de montage de la nappe :
 1. Enfiler l'extrémité **Mini** (12 mm) depuis la fente de la tête, à travers la fenêtre de tête, le canal du bras, la fenêtre d'épaule, le fût.
@@ -242,11 +243,14 @@ Non vérifié (à faire sur pièces réelles) : couple de serrage réel des vis 
 
 | Fichier STL (`export/stl/`) | Qté | Orientation (déjà appliquée dans le STL) | Volume plein | Remarques |
 |---|---|---|---|---|
-| `01_pied_plat` | 1 | platine sur le plateau | 10,3 cm³ | — |
-| `01b_cavalier_adaptateur` | 0/1 | retourné (joues en haut) | 13,9 cm³ | seulement si fixation sur paroi |
+| `01_pied_couvercle` | 1 | platine sur le plateau | ≈ 11 cm³ | fixation sur couvercle |
+| `01c_gabarit_percage_couvercle` | 1 | à plat | ≈ 2 cm³ | gabarit de pointage des 5 trous du couvercle |
+| `01a_pied_plat_centre` | 0/1 | platine sur le plateau | 10,3 cm³ | variante |
+| `01b_cavalier_adaptateur` | 0/1 | retourné (joues en haut) | 13,9 cm³ | variante paroi |
 | `02_bague_retenue` | 1 | à plat | 1,0 cm³ | — |
 | `03_collier_tourelle` | 1 | debout (anneau sur le plateau) | 10,4 cm³ | brim 5 mm |
 | `04a_bras_corps_L150` | 1 | à plat | 18,4 cm³ | pont 18 mm |
+| `04a_bras_corps_L170_alt` | 0/1 | à plat | ≈ 21 cm³ | alternative entraxe 170 |
 | `04b_fourche_x2` | **2** | debout sur le manchon | 11,4 cm³ | brim 5 mm |
 | `04c_goupille_x4` | 4 | tête sur le plateau | 0,1 cm³ | facultatif (colle) |
 | `05_tete_coque` | 1 | paroi haute sur le plateau, noix en haut | 8,3 cm³ | — |
@@ -307,8 +311,8 @@ Tout le reste (3 vis, 3 écrous, 4 goupilles, bague) est imprimé.
 
 ## 12. Points à mesurer / valider avant d'imprimer le tout
 
-1. **Longueur de nappe consommée dans le boîtier Pi** : du connecteur CAM/DISP jusqu'au point où la nappe passe sous la platine, dans le cheminement réel (au-dessus du HAT). Si > 86 mm : réduire `bras_L` ou câble 500 mm.
-2. **Surface d'accueil de la platine** : couvercle ? chant de paroi ? Si paroi : épaisseur (`mur_ep`), largeur et pas des fentes d'aération (pour les 2 trous du cavalier), hauteur libre à l'intérieur (`cavalier_int_h` ne doit pas toucher le HAT).
+1. **Longueur de nappe consommée dans le boîtier Pi** : ≈ 35 mm entre le connecteur CAM et le bord du boîtier d'après la photo au mètre ; à confirmer une fois le couvercle en place. Si > 85 mm : garder le corps de 150, sinon le corps de 170 est possible.
+2. **Couvercle** (décision prise) : percer le trou nappe Ø22 à 16 mm du bord extérieur, au-dessus du connecteur CAM, et les 4 trous Ø3,4 avec le gabarit ; vérifier que le couvercle est assez rigide sous la platine (renfort local 2 mm si le couvercle est ajouré).
 3. **Sens de basculement souhaité** du bras (le collier se monte pattes à l'opposé) et position neutre du lacet.
 4. **Variante de caméra** : standard (objectif 8 mm) ou Wide (9 mm → `objectif_h`).
 5. Impression de calibration : 1 vis L11 + 1 écrou-rosette + la bague (30 min).
@@ -341,6 +345,7 @@ hardware/camera-arm/
 │   ├── fcstd/NN_*.FCStd              ← une pièce par document + feuille « Parametres »
 │   ├── step/NN_*.step                ← STEP (repère de conception)
 │   ├── stl/NN_*.stl                  ← STL orientés pour l'impression, posés en Z = 0
+│   ├── gabarit_couvercle.dxf / .svg  ← motif de perçage du couvercle (repère : centre du fût)
 │   └── rapport.json                  ← paramètres, volumes, vérifications, budget nappe
 └── renders/*.png
 ```
@@ -352,6 +357,8 @@ Régénérer avec d'autres paramètres :
 * Rendus : `python3 make_renders.py ./export ./renders` puis `python3 schemas_2d.py ./renders` (dépendances : numpy, pillow, matplotlib).
 
 Le modèle est paramétrique **par le script** (relancer = tout régénérer, y compris les contrôles) ; les `.FCStd` contiennent les solides résultants (`Part::Feature`) et la feuille de paramètres à titre documentaire, pas un arbre PartDesign pilotable à la souris.
+
+**Compatibilité de version** : les `.FCStd` ont été écrits par FreeCAD 26.3 (build conda-forge du 16/09/2026). Un FreeCAD 1.0 ou 1.1 les ouvre normalement (contenu `Part::Feature` + feuille de calcul), au pire avec un avertissement de version ; en cas de refus, importer les `.step` ou rejouer la macro dans ta version, ce qui régénère des fichiers natifs.
 
 ---
 
