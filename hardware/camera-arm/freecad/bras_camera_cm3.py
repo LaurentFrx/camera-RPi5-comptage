@@ -13,6 +13,10 @@ plus de tourillon : la fourche se glisse sur la noix sans écarter les oreilles)
 coque par 4 fûts de façade portés par des languettes-ressorts découpées dans la plaque avant (précontrainte 0,2 mm),
 entonnoirs à toutes les entrées de canal, ouverture optique 14 chanfreinée, dégagement objectif 1,5, corps de bras
 ajusté serré dans les fourches.
+Révision du 01/10 (soir) : collier-tourelle refait. Les plaques de noix traversaient le tenon du fût et la bague de
+retenue, la bague Ø32 ne pouvait pas passer entre les plaques (18) et les plaques surplombaient l'alésage à
+l'impression. Maintenant : fût lisse arrêté sous le collier (plus de tenon ni de bague), plaques posées sur le mur
+de l'anneau par des pieds chanfreinés à 45°, collier captif par une goupille Ø3 courant dans une rainure du fût.
 
 Conventions :
   * unités mm, Z vers le haut pour le pied ; repère « bras » : X = longueur, Y = axe des charnières,
@@ -67,7 +71,8 @@ P = dict(
     pied_c=46.0, pied_ep=4.0, fente_l=3.4, fente_L=8.0, fente_pos=17.0,
     pied_cx=50.0, pied_cy=46.0, pied_decal=7.0, fente_x=19.0, fente_y_av=-8.0, fente_y_ar=22.0,    # pied « couvercle » : bord de platine à 16 mm de l'axe du fût (= rayon du congé), fentes à 4 mm des bords
     couvercle_trou=22.0, gabarit_ep=1.2, bras_L_alt=170.0,
-    fut_d=26.0, fut_alesage=20.0, fut_h=12.5, tenon_d=24.0, tenon_h=3.0, bague_d=32.0, bague_jeu=0.1,
+    fut_d=26.0, fut_alesage=20.0, fut_h=11.5,                              # fût lisse arrêté 0,5 sous le haut du collier (plus de tenon ni de bague)
+    rainure_z=6.0, rainure_l=3.4, rainure_prof=1.2, boss_goupille_d=8.0, boss_goupille_L=2.0,   # retenue du collier : goupille Ø3 radiale dans une rainure du fût
     collier_d=34.0, collier_jeu=0.3, collier_h=12.0, fente_collier=2.0,
     patte_L=9.0, patte_l=8.0, patte_h=10.0,
     mur_ep=3.0, cavalier_h=25.0, cavalier_ep=4.0, cavalier_int_h=14.0,   # adaptateur « cavalier » (paroi verticale)
@@ -429,9 +434,16 @@ def piece_bras_corps(L):
     return c.removeSplitter()
 
 def piece_goupille():
-    """Goupille imprimée Ø3 x 7 à tête (retient le corps de bras dans la fourche ; alternative : colle)."""
+    """Goupille imprimée Ø3 x 7 à tête : 4 retiennent le corps de bras dans les fourches (alternative : colle),
+    1 traverse le bossage du collier et court dans la rainure du fût (collier captif)."""
     g = fuse(cyl(P["goupille_d"] / 2 - 0.15, 6.8), cyl(3.0, 1.2, z=6.8))
     return g
+
+def rainure_fut():
+    """Rainure circonférentielle du fût (goupille de retenue du collier) : largeur rainure_l, profondeur rainure_prof,
+    centrée sur z = rainure_z. À soustraire du pied."""
+    r = P["fut_d"] / 2; z0 = P["rainure_z"] - P["rainure_l"] / 2
+    return cyl(r + 1.0, P["rainure_l"], z=z0).cut(cyl(r - P["rainure_prof"], P["rainure_l"] + 2, z=z0 - 1))
 
 def chanfreins_alesage(z_haut, z_bas):
     """Deux cônes à 45° (chanf_fut) sur les arêtes haute et basse de l'alésage Ø20 du fût : la nappe n'y frotte
@@ -442,20 +454,17 @@ def chanfreins_alesage(z_haut, z_bas):
     return [haut, bas]
 
 def piece_pied_couvercle():
-    """Pied pour fixation sur couvercle : fût creux à l'origine, platine pied_cx × pied_cy décalée de pied_decal vers +y
-    (le bord -y de la platine affleure la face extérieure de la paroi du boîtier ; la nappe monte à 16 mm du bord).
-    4 fentes 3,4 × 8 (vis M3 ou goupilles collées)."""
+    """Pied pour fixation sur couvercle : fût creux lisse (rainure de retenue du collier à mi-hauteur), platine
+    pied_cx × pied_cy décalée de pied_decal vers +y (le bord -y de la platine affleure la face extérieure de la paroi
+    du boîtier ; la nappe monte à 16 mm du bord). 4 fentes 3,4 × 8 (vis M3 ou goupilles collées)."""
     cx, cy, ep = P["pied_cx"], P["pied_cy"], P["pied_ep"]
     pl = rrect(cx, cy, ep, 4.0, cy=P["pied_decal"], z0=-ep)
     for sx in (+1, -1):
         for yy in (P["fente_y_av"], P["fente_y_ar"]):
             pl = pl.cut(rrect(P["fente_l"], P["fente_L"], ep + 2, P["fente_l"] / 2 - 0.01, sx * P["fente_x"], yy, -ep - 1))
-    fut = cyl(P["fut_d"] / 2, P["fut_h"])
-    tenon = cyl(P["tenon_d"] / 2, P["tenon_h"], z=P["fut_h"])
-    conge = Part.makeCone(P["fut_d"] / 2 + 3, P["fut_d"] / 2, 3.0)
-    conge = conge.common(box(cx, cy, 10, -cx / 2, P["pied_decal"] - cy / 2, -1))   # le congé ne déborde pas de la platine
-    pied = fuse(pl, fut, tenon, conge)
-    return cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30), *chanfreins_alesage(P["fut_h"] + P["tenon_h"], -ep))
+    fut = cyl(P["fut_d"] / 2, P["fut_h"])                 # pas de congé : le collier repose sur la platine, autour du fût
+    pied = fuse(pl, fut)
+    return cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30), rainure_fut(), *chanfreins_alesage(P["fut_h"], -ep))
 
 def gabarit_couvercle_2d():
     """Motif de perçage du couvercle (repère : centre du fût) : contour de platine, trou nappe, 4 trous de vis."""
@@ -503,10 +512,8 @@ def piece_pied_plat_centre():
             pl = pl.cut(rrect(P["fente_L"], P["fente_l"], ep + 2, P["fente_l"] / 2 - 0.01,
                               sx * P["fente_pos"], sy * P["fente_pos"], -ep - 1))
     fut = cyl(P["fut_d"] / 2, P["fut_h"])
-    tenon = cyl(P["tenon_d"] / 2, P["tenon_h"], z=P["fut_h"])
-    conge = Part.makeCone(P["fut_d"] / 2 + 3, P["fut_d"] / 2, 3.0)
-    pied = fuse(pl, fut, tenon, conge)
-    pied = cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30), *chanfreins_alesage(P["fut_h"] + P["tenon_h"], -ep))
+    pied = fuse(pl, fut)
+    pied = cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30), rainure_fut(), *chanfreins_alesage(P["fut_h"], -ep))
     return pied
 
 def piece_cavalier_adaptateur():
@@ -528,18 +535,16 @@ def piece_cavalier_adaptateur():
         ad = ad.cut(cylY(1.7, -c / 2 - 1, y_int0 + P["cavalier_ep"] + 1, x=sx * 15.0, z=-ep - P["cavalier_int_h"] / 2))
     return ad.removeSplitter()
 
-def piece_bague():
-    r_in = P["tenon_d"] / 2 + P["bague_jeu"]
-    b = cyl(P["bague_d"] / 2, P["tenon_h"]).cut(cyl(r_in, P["tenon_h"] + 2, z=-1))
-    return b.removeSplitter()
-
 M_NOIX_EPAULE = mat_from_axes(V(0, 0, -1), V(0, 1, 0), V(1, 0, 0))   # repère noix → monde (col vers -Z)
 
 def piece_collier():
-    """Collier-tourelle (lacet) : anneau fendu serré sur le fût par une vis imprimée, noix d'épaule
-    au-dessus (axe horizontal Y à la hauteur collier_h + noix_col, à l'aplomb du fût)."""
+    """Collier-tourelle (lacet) : anneau fendu serré sur le fût par une vis imprimée, noix d'épaule au-dessus (axe
+    horizontal Y à la hauteur collier_h + noix_col_epaule, à l'aplomb du fût). Chaque plaque de noix repose sur le mur
+    de l'anneau par un pied dont la face intérieure est chanfreinée à 45° (aucun surplomb au-dessus de l'alésage, rien
+    dans le volume du fût qui s'arrête sous le collier). Bossage côté +X et trou Ø3,2 radial pour la goupille de
+    retenue qui court dans la rainure du fût : collier captif, rotation de lacet libre."""
     ro = P["collier_d"] / 2; ri = P["fut_d"] / 2 + P["collier_jeu"]; h = P["collier_h"]
-    anneau = cyl(ro, h).cut(cyl(ri, h + 2, z=-1))
+    anneau = cyl(ro, h)
     x1 = -(ro + P["patte_L"]); x0 = -ro + 2.0
     pattes = []
     for s in (+1, -1):
@@ -553,11 +558,26 @@ def piece_collier():
     poche = rotX(hexprism(P["ecrou_hex"] + P["ecrou_jeu"], P["ecrou_poche"] + 0.5), -90)   # +Z → +Y
     poche.translate(V(xv, 1.0 + P["patte_l"] - P["ecrou_poche"], zv))
     col = col.cut(poche)
+    # pieds des plaques : quadrilatère (y, z) extrudé sur |x| ≤ noix_R, limité au cylindre extérieur de l'anneau ;
+    # face intérieure de ri (sur le mur, en z = h) à noix_gap/2 (face de plaque) à 45°
+    yi = P["noix_gap"] / 2; hp = ri - yi; z_pl = h + hp; R = P["noix_R"]
+    for s in (+1, -1):
+        # bloc |x| ≤ R, |y| ∈ [yi, ro], z ∈ [h, z_pl], moins le coin intérieur-bas par une boîte tournée de 45° autour de X
+        # (face inclinée passant par (|y| = ri, z = h) et (|y| = yi, z = z_pl)) ; limité au cylindre extérieur de l'anneau
+        bloc = box(2 * R, ro - yi, hp, -R, min(s * yi, s * ro), h)
+        coin = box(2 * R + 2, 60.0, 60.0, -R - 1, -30.0, -60.0)                       # boîte z ∈ [-60, 0] avant rotation
+        coin.rotate(V(), V(1, 0, 0), -45.0 * s)                                        # sa face supérieure devient le plan incliné
+        coin.translate(V(0, s * ri, h))                                                # ... passant par (s·ri, h) avec la pente voulue
+        pied = bloc.cut(coin)
+        col = col.fuse(pied.common(cyl(ro + 0.02, hp + 2, z=h - 1)))      # +0,02 : pas de face cylindrique coïncidente avec l'anneau (booléen propre)
     n = noix(col=P["noix_col_epaule"]).transformGeometry(M_NOIX_EPAULE)
     n.translate(V(X_AXE_EPAULE, 0, Z_AXE_EPAULE))
-    n = n.common(box(200, 200, 200, -100, -100, h - 0.5))
+    n = n.common(box(200, 200, 200, -100, -100, z_pl - 0.01))
     col = fuse(col, n)
-    col = col.cut(cyl(ri, h + 2, z=-1))
+    # bossage et trou radial de la goupille de retenue (côté +X, à l'opposé des pattes)
+    col = col.fuse(cyl(P["boss_goupille_d"] / 2, P["boss_goupille_L"] + 1.0, x=ro - 1.0, y=0, z=P["rainure_z"], d=V(1, 0, 0)))
+    col = col.cut(cyl(P["goupille_d"] / 2, 12.0, x=ri - 1.0, y=0, z=P["rainure_z"], d=V(1, 0, 0)))
+    col = col.cut(cyl(ri, h + 1, z=-1))                 # alésage du fût sur la hauteur de l'anneau seulement
     return col.removeSplitter()
 
 def piece_tete_coque():
@@ -710,7 +730,11 @@ def placement_tete(pl_bras, L, beta):
     return pl
 
 def placer(shape, pl):
-    return shape.transformGeometry(pl.toMatrix())
+    """Copie de la forme munie du placement (pas de recalcul de géométrie : les booléens OCCT acceptent les formes
+    localisées, alors que transformGeometry peut rendre certains solides « non orientables »)."""
+    s = shape.copy()
+    s.Placement = pl.multiply(s.Placement)
+    return s
 
 def main():
     L = P["bras_L"]
@@ -723,12 +747,11 @@ def main():
     pieces["01b_cavalier_adaptateur"] = piece_cavalier_adaptateur()
     pieces["01c_gabarit_percage_couvercle"] = piece_gabarit_couvercle()
     ecrire_gabarit_dxf_svg(OUT)
-    pieces["02_bague_retenue"] = piece_bague()
     pieces["03_collier_tourelle"] = piece_collier()
     pieces[corps_key] = piece_bras_corps(L)
     pieces["04a_bras_corps_L%d_alt" % int(P["bras_L_alt"])] = piece_bras_corps(P["bras_L_alt"])
     pieces["04b_fourche_x2"] = piece_fourche()
-    pieces["04c_goupille_x4"] = piece_goupille()
+    pieces["04c_goupille_x5"] = piece_goupille()
     pieces["05_tete_coque"] = piece_tete_coque()
     pieces["06_tete_facade"] = piece_tete_facade()
     pieces["07_vis_M8_L11_x4"] = vis_molettee(P["vis_L_art"])
@@ -742,11 +765,10 @@ def main():
     orient = {
         "01_pied_couvercle": Placement(), "01a_pied_plat_centre": Placement(), "01c_gabarit_percage_couvercle": Placement(),
         "01b_cavalier_adaptateur": Placement(V(), Rot(V(1, 0, 0), 180)),   # platine sur le plateau, joues en haut
-        "02_bague_retenue": Placement(),
         "03_collier_tourelle": Placement(),
         corps_key: Placement(),                                            # à plat
         "04b_fourche_x2": Placement(V(), Rot(V(0, 1, 0), -90)),            # debout : -X (manchon) → -Z ? voir note
-        "04c_goupille_x4": Placement(V(), Rot(V(1, 0, 0), 180)),           # tête sur le plateau
+        "04c_goupille_x5": Placement(V(), Rot(V(1, 0, 0), 180)),           # tête sur le plateau
         "05_tete_coque": Placement(V(), Rot(V(1, 0, 0), -90)),             # paroi haute sur le plateau, noix en haut
         "06_tete_facade": Placement(V(), Rot(V(1, 0, 0), 180)),            # face avant sur le plateau
         "07_vis_M8_L11_x4": Placement(), "08_vis_M8_L20": Placement(),
@@ -760,15 +782,14 @@ def main():
     assert abs(fk_o.BoundBox.ZMin - X_MANCHON0) < 1e-6, fk_o.BoundBox
     # écrou-rosette : corps hexagonal vers le bas (z<0 dans son repère) → déjà « tête en haut » : dents vers le haut
     desc = {
-        "01_pied_couvercle": "Pied pour couvercle : platine 50x46 décalée (bord affleurant la paroi), 4 fentes 3,4x8, fût creux Ø26/Ø20 à arêtes chanfreinées, tenon Ø24",
+        "01_pied_couvercle": "Pied pour couvercle : platine 50x46 décalée (bord affleurant la paroi), 4 fentes 3,4x8, fût creux Ø26/Ø20 à arêtes chanfreinées, rainure de retenue du collier",
         "01a_pied_plat_centre": "Variante : platine 46x46 centrée sur le fût",
         "01c_gabarit_percage_couvercle": "Gabarit de perçage du couvercle (plaque 1,2 mm) : trou nappe Ø22 + 4 trous Ø3,4",
         "01b_cavalier_adaptateur": "Adaptateur à cheval sur une paroi verticale (mur_ep) recevant le pied plat (2 trous Ø3,4)",
-        "02_bague_retenue": "Bague emmanchée/collée sur le tenon : retient axialement le collier (jeu 0,5)",
-        "03_collier_tourelle": "Collier fendu de lacet (serrage par vis imprimée M8) portant la noix d'épaule",
+        "03_collier_tourelle": "Collier fendu de lacet (serrage par vis imprimée M8) portant la noix d'épaule sur des pieds chanfreinés ; goupille de retenue dans la rainure du fût",
         corps_key: "Corps de bras 24x8, canal fermé 18x2,4 à bouches chanfreinées, 2 trous de goupille par extrémité",
         "04b_fourche_x2": "Embout-fourche (x2) : manchon 21 mm (serré 0,1), oreilles R11 crantées des deux côtés, alésages Ø8,6, bouche de canal évasée",
-        "04c_goupille_x4": "Goupille Ø3 imprimée (x4) — facultative si collage",
+        "04c_goupille_x5": "Goupille Ø3 imprimée (x5) : 4 pour les fourches (facultatives si collage), 1 de retenue du collier",
         "05_tete_coque": "Coque arrière Camera Module 3 : logement PCB, plots/pions (référence rigide), fente nappe évasée, noix symétrique",
         "06_tete_facade": "Façade encliquetable : ouverture optique 14 chanfreinée, 4 fûts d'appui sur languettes-ressorts plaquant le PCB (0,2)",
         "07_vis_M8_L11_x4": "Vis moletée imprimée M8 pas 2, L=11 (x4, deux par articulation)",
@@ -793,8 +814,9 @@ def main():
     pl_corps = pl_bras.multiply(Placement(V(-X_FOND_MANCHON, 0, 0), Rot()))
     placed = {
         "pied": (pieces["01_pied_couvercle"], Placement()),
-        "bague": (pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
         "collier": (pieces["03_collier_tourelle"], pl_collier),
+        "goupille_collier": (pieces["04c_goupille_x5"], pl_collier.multiply(Placement(
+            V(P["collier_d"] / 2 + P["boss_goupille_L"] - 6.8, 0, P["rainure_z"]), Rot(V(0, 1, 0), 90)))),   # pointe vers le fût, tête contre le bossage
         "bras_corps": (pieces[corps_key], pl_corps),
         "fourche_epaule": (pieces["04b_fourche_x2"], pl_f1),
         "fourche_tete": (pieces["04b_fourche_x2"], pl_f2),
@@ -830,7 +852,7 @@ def main():
         for s in (+1, -1):
             yg = s * (P["bras_l"] / 2 + P["manchon_ep"] + P["manchon_jeu"])
             rot = Rot(V(1, 0, 0), 90 if s > 0 else -90)      # +Z → -Y (s>0) / +Y (s<0) : pointe vers le canal
-            placed[f"goupille_{nom}_{'A' if s > 0 else 'B'}"] = (pieces["04c_goupille_x4"], plf.multiply(
+            placed[f"goupille_{nom}_{'A' if s > 0 else 'B'}"] = (pieces["04c_goupille_x5"], plf.multiply(
                 Placement(V(X_GOUPILLE, yg + s * 6.8, 0), rot)))
 
     doc = App.newDocument("assemblage")
@@ -843,7 +865,7 @@ def main():
     for pose_nom, (ps_, th_, be_) in {"repos": (0, 0, 0), "horizontal": (0, 90, 90), "lacet45": (45, 60, 120), "plongee": (0, 90, 150)}.items():
         d_ = os.path.join(OUT, "stl_assemblage", "pose_" + pose_nom); os.makedirs(d_, exist_ok=True)
         plb_ = placement_bras(ps_, th_); plt_ = placement_tete(plb_, L, be_); plc_ = Placement(V(), Rot(V(0, 0, 1), ps_))
-        sub = {"pied": (pieces["01_pied_couvercle"], Placement()), "bague": (pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
+        sub = {"pied": (pieces["01_pied_couvercle"], Placement()),
                "collier": (pieces["03_collier_tourelle"], plc_), "bras_corps": (pieces[corps_key], plb_.multiply(Placement(V(-X_FOND_MANCHON, 0, 0), Rot()))),
                "fourche_epaule": (pieces["04b_fourche_x2"], plb_.multiply(Placement(V(), Rot(V(0, 1, 0), 180)))),
                "fourche_tete": (pieces["04b_fourche_x2"], plb_.multiply(Placement(V(L, 0, 0), Rot()))),
@@ -872,9 +894,9 @@ def main():
         return round(math.degrees(math.asin(max(-1, min(1, d.z)))), 1), round(d.x, 2)
     verif["visee_elevation_deg_et_composante_avant"] = {f"epaule{th}_tete{be}": visee(th, be)
                                                         for th in (45, 60, 90) for be in (60, 90, 120, 150)}
-    fixe = fuse(placer(pieces["01_pied_couvercle"], Placement()),
-                placer(pieces["02_bague_retenue"], Placement(V(0, 0, P["fut_h"]), Rot())),
-                placer(pieces["03_collier_tourelle"], pl_collier))
+    # base fixe = pied + collier en COMPOSÉ (pas de fusion : leurs faces coplanaires z = 0 font échouer le booléen) ; common() d'un
+    # composé rend la somme des volumes communs à chaque solide
+    fixe = Part.makeCompound([placer(pieces["01_pied_couvercle"], Placement()), placer(pieces["03_collier_tourelle"], pl_collier)])
     def bras_complet(plb):
         return fuse(placer(pieces[corps_key], plb.multiply(Placement(V(-X_FOND_MANCHON, 0, 0), Rot()))),
                     placer(pieces["04b_fourche_x2"], plb.multiply(Placement(V(), Rot(V(0, 1, 0), 180)))),
@@ -911,6 +933,17 @@ def main():
     vi180 = placer(s_, pl_.multiply(Placement(V(), Rot(V(0, 0, 1), 180))))
     inter["vis_vs_ecrou_epaule(phase+180deg)"] = round(vi180.common(placer(*placed["ecrou_epaule"])).Volume, 3)
     inter["fourche_epaule_vs_collier"] = round(placer(pieces["04b_fourche_x2"], pl_f1).common(placer(pieces["03_collier_tourelle"], pl_collier)).Volume, 3)
+    # collier vs pied (le fût s'arrête sous le collier, les pieds de plaque restent sur le mur de l'anneau), goupille de retenue
+    col_p = placer(pieces["03_collier_tourelle"], pl_collier); pied_p = placer(pieces["01_pied_couvercle"], Placement())
+    gp = placer(*placed["goupille_collier"])
+    ri_c = P["fut_d"] / 2 + P["collier_jeu"]
+    inter["collier_vs_pied"] = round(col_p.common(pied_p).Volume, 3)
+    inter["goupille_collier_vs_pied"] = round(gp.common(pied_p).Volume, 3)
+    inter["goupille_collier_vs_collier"] = round(gp.common(col_p).Volume, 3)
+    inter["collier_surplomb_alesage(z=h..h+0.3,r<ri-0.3)"] = round(col_p.common(cyl(ri_c - 0.3, 0.3, z=P["collier_h"])).Volume, 3)
+    verif["retenue_collier"] = dict(goupille_dans_rainure_mm=round(P["fut_d"] / 2 - (P["collier_d"] / 2 + P["boss_goupille_L"] - 6.8), 2),
+                                    rainure=dict(z=P["rainure_z"], largeur=P["rainure_l"], profondeur=P["rainure_prof"]),
+                                    jeu_axial_goupille_rainure_mm=round(P["rainure_l"] - (P["goupille_d"] - 0.3), 2))
     inter["fourche_tete_vs_coque"] = com(placer(pieces["04b_fourche_x2"], pl_f2), placer(pieces["05_tete_coque"], pl_tete))
     inter["corps_vs_fourches"] = round(placer(pieces[corps_key], pl_corps).common(
         fuse(placer(pieces["04b_fourche_x2"], pl_f1), placer(pieces["04b_fourche_x2"], pl_f2))).Volume, 3)
