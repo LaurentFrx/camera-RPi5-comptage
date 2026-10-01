@@ -278,7 +278,7 @@ Total ≈ 83 cm³ « pleins », soit ≈ 70 à 80 g de PETG une fois remplis à 
 
 * PETG, buse 0,4, couches 0,2 (0,15 pour la visserie et les écrous) ; 3 périmètres (4 pour les fourches et le collier) ; remplissage gyroïde 25 % (100 % pour vis, écrous, goupilles, bague).
 * Pas de supports ; brim 5 mm pour les fourches et le collier ; ventilation PETG normale ; température de lit propre à ton filament.
-* Ordre conseillé : **d'abord le kit de calibration du filetage** `export/stl/20_kit_calibration_plateau.stl` (≈ 40 min) : une vis L11 et trois écrous-rosette à jeu radial 0,3 / 0,4 / 0,5 mm, marqués 1, 2 et 3 points sur un pan de l'hexagone. On visse chaque écrou à la main : le bon est celui qui s'engage sans forcer et tourne avec deux doigts sans jeu perceptible. Reporter la valeur dans `vis_jeu`, régénérer, puis imprimer le reste. Seuls les écrous dépendent du jeu : les vis définitives peuvent être imprimées dès ce premier essai. Le kit est produit par `freecad/kit_calibration.py`.
+* Ordre conseillé : **d'abord le kit de calibration du filetage** `export/stl/20_kit_calibration_plateau.stl` (≈ 25 min) : une vis L11 et un écrou-rosette au jeu nominal de 0,4 mm. L'écrou doit s'engager sans forcer et tourner avec deux doigts sans jeu perceptible ; trop dur → `vis_jeu` 0,5, trop libre → 0,3, puis régénérer. Seuls les écrous dépendent du jeu : les vis définitives peuvent être imprimées dès ce premier essai. Le kit est produit par `freecad/kit_calibration.py` ; avec `JEUX="0.3,0.4,0.5"` il sort un kit comparatif de trois écrous marqués 1, 2 et 3 points.
 
 ![Kit de calibration](renders/44_kit_calibration_filetage.png)
 
@@ -356,7 +356,7 @@ hardware/camera-arm/
 │   ├── schemas_2d.py                 ← schémas cotés (matplotlib)
 │   ├── verif_filetage_freecad.py     ← contrôle de la visserie imprimée (coupes axiales, volumes) sous freecadcmd
 │   ├── verif_filetage_figure.py      ← figure 43 à partir des coupes
-│   └── kit_calibration.py            ← kit d'essai du jeu de filetage (vis + 3 écrous 0,3/0,4/0,5)
+│   └── kit_calibration.py            ← kit d'essai du jeu de filetage (vis + écrou nominal ; JEUX=... pour un kit comparatif)
 ├── export/
 │   ├── fcstd/00_assemblage.FCStd     ← toutes les pièces placées (pose par défaut) + feuille « Pose »
 │   ├── fcstd/NN_*.FCStd              ← une pièce par document + feuille « Parametres »

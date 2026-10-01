@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-kit_calibration.py — kit d'essai du filetage imprimé : 1 vis M8 L11 + 3 écrous-rosette à jeu radial 0,3 / 0,4 / 0,5 mm,
-marqués respectivement 1, 2 et 3 points sur un pan de l'hexagone. À exécuter avec freecadcmd :
+kit_calibration.py — kit d'essai du filetage imprimé : 1 vis M8 L11 + 1 écrou-rosette au jeu nominal (vis_jeu = 0,4 mm).
+Avec JEUX="0.3,0.4,0.5", produit à la place un kit comparatif de 3 écrous marqués 1, 2 et 3 points. À exécuter avec freecadcmd :
 
   OUT_DIR=<dossier_export> freecadcmd -c "exec(open('kit_calibration.py', encoding='utf-8').read())"
 
@@ -26,7 +26,8 @@ ns = {"__file__": os.path.join(ICI, "bras_camera_cm3.py")}
 exec(compile(src, "bras_camera_cm3", "exec"), ns)
 P = ns["P"]
 
-JEUX = [0.3, 0.4, 0.5]
+# jeux radiaux à produire : par défaut le seul jeu nominal de la macro (vis_jeu) ; JEUX="0.3,0.4,0.5" pour un kit comparatif marqué
+JEUX = [float(x) for x in os.environ.get("JEUX", str(P["vis_jeu"])).split(",")]
 rapport = {"jeux": JEUX, "pieces": {}}
 
 def points_marquage(ecrou, n):
@@ -64,7 +65,8 @@ x = 0.0
 for i, jeu in enumerate(JEUX, start=1):
     P["vis_jeu"] = jeu
     e = ns["ecrou_rosette"]()
-    e = points_marquage(e, i)
+    if len(JEUX) > 1:
+        e = points_marquage(e, i)
     nom = f"20_kit_calibration_ecrou_rosette_jeu{int(round(jeu * 10)):02d}"
     pl = pose_plateau(e)
     me = mesh_de(e, pl)
@@ -73,7 +75,7 @@ for i, jeu in enumerate(JEUX, start=1):
     me2 = mesh_de(e, Placement(pl.Base + V(x, 0, 0), Rot()))
     plateau.addMesh(me2)
     trans = ns["RAPPORT"]["verifications"].get("taraudage_transitions", {}).get("ecrou_rosette")
-    rapport["pieces"][nom] = dict(jeu_radial=jeu, marquage_points=i, valide=bool(e.isValid()), volume_cm3=round(e.Volume / 1000, 2),
+    rapport["pieces"][nom] = dict(jeu_radial=jeu, marquage_points=(i if len(JEUX) > 1 else 0), valide=bool(e.isValid()), volume_cm3=round(e.Volume / 1000, 2),
                                   taraudage_transitions=trans)
     print(f"[kit] écrou-rosette jeu {jeu} ({i} point(s)) : valide={e.isValid()} vol={e.Volume/1000:.2f} cm3 transitions={trans}")
 P["vis_jeu"] = jeu_initial
