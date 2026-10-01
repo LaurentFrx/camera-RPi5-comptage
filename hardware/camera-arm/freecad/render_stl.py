@@ -46,7 +46,7 @@ def crease_edges(V, angle_deg=30.0):
     """Arêtes vives et de bord : retourne (P0, P1) en coordonnées monde."""
     n = len(V)
     q = np.round(V.reshape(-1, 3), 2)
-    _, inv = np.unique(q, axis=0, return_inverse=True)
+    u, inv = np.unique(q, axis=0, return_inverse=True)      # u : sommets uniques, E indexe u
     idx = inv.reshape(n, 3)
     e0 = np.stack([idx[:, 0], idx[:, 1]], 1); e1 = np.stack([idx[:, 1], idx[:, 2]], 1); e2 = np.stack([idx[:, 2], idx[:, 0]], 1)
     E = np.concatenate([e0, e1, e2]); F = np.concatenate([np.arange(n)] * 3)
@@ -61,11 +61,14 @@ def crease_edges(V, angle_deg=30.0):
     two = count == 2
     i2 = start[two]
     dots = np.einsum("ij,ij->i", N[F[i2]], N[F[i2 + 1]])
-    ok_area = (area[F[i2]] > 0.02) & (area[F[i2 + 1]] > 0.02)      # ignore les triangles dégénérés (normales bruitées)
+    # ignore les triangles dégénérés ou effilés (normale bruitée) : aire > 0,02 mm² ET hauteur mini > 0,05 mm
+    lmax = np.max(np.stack([np.linalg.norm(V[:, 1] - V[:, 0], axis=1), np.linalg.norm(V[:, 2] - V[:, 1], axis=1),
+                            np.linalg.norm(V[:, 0] - V[:, 2], axis=1)], 1), axis=1)
+    alt = area / (lmax + 1e-12)                                     # = 2·aire/côté max (aire = norme du produit vectoriel)
+    ok_area = (area[F[i2]] > 0.02) & (area[F[i2 + 1]] > 0.02) & (alt[F[i2]] > 0.05) & (alt[F[i2 + 1]] > 0.05)
     sel.append(i2[(dots < cosa) & ok_area])
     sel = np.concatenate(sel)
-    pts = V.reshape(-1, 3)[E[sel]] if False else None
-    A = q[E[sel][:, 0]]; B = q[E[sel][:, 1]]
+    A = u[E[sel][:, 0]]; B = u[E[sel][:, 1]]                 # (correctif : q était indexé par des indices de u)
     return A, B
 
 

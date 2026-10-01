@@ -8,6 +8,12 @@ Exécution :
   * dans FreeCAD : Macro > Macros… > Exécuter (les documents s'ouvrent, les exports vont dans OUT_DIR
     ou, à défaut, dans ~/bras_camera_out).
 
+Révision du 01/10 (vérification nappe / tenue de la caméra) : charnière symétrique (écrou-rosette + vis des deux côtés,
+plus de tourillon : la fourche se glisse sur la noix sans écarter les oreilles), PCB plaqué sans jeu sur les plots de la
+coque par 4 fûts de façade portés par des languettes-ressorts découpées dans la plaque avant (précontrainte 0,2 mm),
+entonnoirs à toutes les entrées de canal, ouverture optique 14 chanfreinée, dégagement objectif 1,5, corps de bras
+ajusté serré dans les fourches.
+
 Conventions :
   * unités mm, Z vers le haut pour le pied ; repère « bras » : X = longueur, Y = axe des charnières,
     Z = épaisseur (plan de la nappe en Z = 0, axe d'articulation décalé de P['excentr'] vers +Z).
@@ -30,6 +36,7 @@ for sub in ("fcstd", "step", "stl", "stl_conception", "stl_assemblage"):
 P = dict(
     # --- nappe (Raspberry Pi Camera Cable Standard–Mini 300 mm) ------------------------------
     nappe_l=16.0, nappe_ep=0.3, canal_l=18.0, canal_h=2.4,
+    chanf_canal=0.6, chanf_fenetre=1.5, chanf_fente=0.8, chanf_fut=1.2,   # entonnoirs d'entrée (corps, bouche de fourche, fente de tête, alésage du fût)
     # --- bras -------------------------------------------------------------------------------
     bras_L=float(os.environ.get("ARM_L", 150.0)),  # entraxe épaule → tête
     bras_l=24.0, bras_h=8.0,
@@ -38,11 +45,10 @@ P = dict(
     fen_demi=11.0,        # nappe libre de chaque côté de l'axe = rayon des oreilles (rayon de pliage ≥ 6 mm jusqu'à 120°)
     noix_R=10.0, noix_ep=6.0, noix_gap=18.0, noix_col=12.0, noix_col_epaule=16.0,   # plaques de noix ; col plus haut à l'épaule (dégagement bague)
     oreille_ep=4.0, oreille_R=11.0, oreille_trou=8.6,        # oreilles de fourche (côté bras)
-    manchon_L=21.0, manchon_ep=2.8, manchon_jeu=0.2, goupille_d=3.2,  # emmanchement corps de bras → fourche
-    jeu_AB=4.0,           # écart face de noix → face d'oreille (A : écrou-rosette ; B : bossage + jeu)
-    axe_d=8.0, boss_B_d=16.0, boss_B_ep=3.5, axe_long=3.5,
+    manchon_L=21.0, manchon_ep=2.8, manchon_jeu=0.1, goupille_d=3.2,  # emmanchement corps de bras → fourche (serré : à coller)
+    jeu_AB=4.0,           # écart face de noix → face d'oreille, comblé par la flasque + dents de l'écrou-rosette (2 côtés)
     dents_n=24, dents_h=1.0, dents_r1=6.5, dents_r2=10.0,
-    ecrou_hex=13.0, ecrou_corps=4.5, ecrou_poche=5.0, ecrou_jeu=0.3, ecrou_flasque_r=10.0,
+    ecrou_hex=13.0, ecrou_corps=3.5, ecrou_poche=5.0, ecrou_jeu=0.3, ecrou_flasque_r=10.0,   # hexagone 3,5 dans une poche de 5 : l'écrou s'enfonce de 1,5 pour glisser la fourche
     # --- visserie imprimée M8 « pas gros » 2 mm --------------------------------------------
     vis_dmaj=7.8, vis_pas=2.0, vis_prof=0.9, vis_jeu=0.4, vis_tete_d=18.0, vis_tete_h=5.0,
     vis_crete=0.35, vis_fond=0.5, filet_sections_par_pas=12, filet_points=48, vis_pointe=1.2,   # construction du filet par loft de sections
@@ -50,10 +56,12 @@ P = dict(
     # --- tête : Raspberry Pi Camera Module 3 (standard) -----------------------------------
     pcb_l=25.0, pcb_h=23.862, pcb_ep=1.0, pcb_jeu_l=0.6, pcb_jeu_h=0.5,
     trou_d=2.2, trous_dx=21.0, trous_dy=12.5, trou_bord_haut=2.0,
-    objectif_c=11.0, objectif_h=8.0, ouverture=13.0, ouverture_r=3.0,
+    objectif_c=11.5, objectif_h=8.5, ouverture=14.0, ouverture_r=3.0, ouverture_chanfrein=0.6,   # bloc objectif ≈ 11,5 mesuré sur photo ; ouverture chanfreinée à 45° côté avant
     connecteur_l=20.5, connecteur_p=5.5, connecteur_h=3.0, nappe_z_conn=1.2,
-    paroi=3.0, fond=2.0, jeu_dos=4.0, facade_ep=1.5, jeu_objectif=0.5, rebord=2.0,
-    plot_d=3.6, pion_d=1.8, pion_h=1.0,
+    paroi=3.0, fond=2.0, jeu_dos=4.0, facade_ep=1.5, jeu_objectif=1.5, rebord=2.0,
+    plot_d=3.6, pion_d=1.8, pion_h=0.8,                                 # pions 0,2 sous la face avant du PCB : les fûts de façade portent sur le PCB, jamais sur les pions
+    pcb_serrage=0.2,                                                   # les fûts de façade dépassent de 0,2 : précontrainte prise par les languettes
+    ressort_l=3.0, ressort_fente=0.6, ressort_x0=2.0, ressort_x1=12.0, ressort_y0=-10.5, ressort_y1=0.5,   # languettes-ressorts de la plaque avant (fûts hauts : le long de x ; fûts bas : le long de y)
     jupe_ep=1.2, jupe_h=6.0, jupe_jeu=0.15, crochet=0.6, crochet_L=8.0,
     # --- pied, fût creux, collier-tourelle ----------------------------------------------------
     pied_c=46.0, pied_ep=4.0, fente_l=3.4, fente_L=8.0, fente_pos=17.0,
@@ -158,6 +166,13 @@ def cut(base, *tools):
     for t in tools:
         r = r.cut(t)
     return r.removeSplitter()
+
+def entonnoir_x(x_bouche, sens, l, h, c_l, c_h, cy=0.0, cz=0.0):
+    """Évasement d'entrée (chanfrein) d'un canal rectangulaire l × h d'axe X : loft entre la section agrandie
+    (l + 2 c_l, h + 2 c_h) dans le plan de la bouche et la section nominale à max(c_l, c_h) vers l'intérieur
+    (sens = +1 : l'intérieur du canal est vers +X). À soustraire du corps."""
+    p = max(c_l, c_h)
+    return loft_rects([(x_bouche - sens * 0.01, l + 2 * c_l, h + 2 * c_h, cy, cz), (x_bouche + sens * p, l, h, cy, cz)])
 
 def loft_rects(sections):
     """sections = [(x, dy, dz, cy, cz), ...] → loft de rectangles dans des plans X = cte"""
@@ -332,7 +347,8 @@ def noix(clip_z_max=None, clip_z_min=None, col=None):
     """Deux plaques parallèles (épaisseur noix_ep) de part et d'autre de la fenêtre nappe (noix_gap),
     axe de charnière = axe Y à l'origine, corps hôte vers +X (face d'appui en X = noix_col).
     Plan de nappe : Z = 0 (l'axe est dans le plan de la nappe).
-    Côté A (+Y) : poche hexagonale (écrou-rosette). Côté B (-Y) : bossage d'appui Ø16 + tourillon Ø8."""
+    Symétrique : chaque plaque porte une poche hexagonale (écrou-rosette) ouverte vers l'extérieur ;
+    la charnière est serrée par une vis de chaque côté (plus de tourillon : montage par simple glissement)."""
     R, ep, gap = P["noix_R"], P["noix_ep"], P["noix_gap"]
     col = P["noix_col"] if col is None else col
     y_in = gap / 2
@@ -343,16 +359,11 @@ def noix(clip_z_max=None, clip_z_min=None, col=None):
         y0 = min(s * y_in, s * (y_in + ep)); y1 = max(s * y_in, s * (y_in + ep))
         disque = cylY(R, y0, y1)
         cou = box(col, ep, zmax - zmin, 0, y0, zmin)
-        plaques.append(fuse(disque, cou))
-    A, B = plaques
-    poche = rotX(hexprism(P["ecrou_hex"] + P["ecrou_jeu"], P["ecrou_poche"] + 0.5), -90)   # +Z → +Y
-    poche.translate(V(0, y_in + ep - P["ecrou_poche"], 0))
-    A = cut(A, poche)
-    yB = -(y_in + ep)
-    boss = cylY(P["boss_B_d"] / 2, yB - P["boss_B_ep"], yB + 0.01)
-    tour = cylY(P["axe_d"] / 2, yB - P["boss_B_ep"] - P["axe_long"], yB - P["boss_B_ep"] + 0.01)
-    B = fuse(B, boss, tour)
-    return fuse(A, B)
+        pl = fuse(disque, cou)
+        poche = rotX(hexprism(P["ecrou_hex"] + P["ecrou_jeu"], P["ecrou_poche"] + 0.5), -90 * s)   # +Z → s·Y
+        poche.translate(V(0, s * (y_in + ep - P["ecrou_poche"]), 0))
+        plaques.append(cut(pl, poche))
+    return fuse(*plaques)
 
 X_MANCHON0 = -34.0        # début du manchon (ouverture) — repère fourche
 X_FOND_MANCHON = -13.0    # fond de l'emmanchement (extrémité du corps de bras)
@@ -360,10 +371,10 @@ X_GOUPILLE = -30.5
 
 def piece_fourche():
     """Fourche (embout de bras) : axe de charnière = axe Y à l'origine, corps de bras vers -X.
-    Oreilles 4 mm à |Y| ∈ [19, 23], rayon 11, symétriques en Z (axe dans le plan de nappe).
-    Oreille A (+Y) : crantage 24 dents sur la face intérieure ; oreille B (-Y) : alésage lisse.
-    Le corps de bras (24x8) s'emmanche sur 21 mm ; 2 goupilles Ø3 imprimées (ou colle).
-    Imprimée debout sur l'ouverture du manchon : aucun surplomb."""
+    Oreilles 4 mm à |Y| ∈ [19, 23], rayon 11, symétriques en Z (axe dans le plan de nappe), toutes deux
+    crantées (24 dents) sur leur face intérieure et alésées Ø8,6 (vis de chaque côté).
+    Le corps de bras (24x8) s'emmanche sur 21 mm, ajustement serré 0,1 ; 2 goupilles Ø3 imprimées (ou colle).
+    Bouche du canal côté fenêtre évasée (entonnoir) pour guider la nappe. Imprimée debout sur l'ouverture du manchon."""
     R, ep, f = P["oreille_R"], P["oreille_ep"], P["fen_demi"]
     jeu = P["manchon_jeu"]
     man_l = P["bras_l"] + 2 * (P["manchon_ep"] + jeu)
@@ -375,10 +386,9 @@ def piece_fourche():
         y0 = min(s * Y_A, s * OREILLE_OUT); y1 = max(s * Y_A, s * OREILLE_OUT)
         o = fuse(cylY(R, y0, y1), box(-x_bloc0, ep, 2 * R, x_bloc0, y0, -R))
         o = cut(o, cylY(P["oreille_trou"] / 2, y0 - 1, y1 + 1))
-        if s > 0:
-            dents = rotX(couronne_dents(P["dents_r1"], P["dents_r2"], P["dents_n"], P["dents_h"]), 90)  # +Z → -Y
-            dents.translate(V(0, Y_A, 0))
-            o = fuse(o, dents)
+        dents = rotX(couronne_dents(P["dents_r1"], P["dents_r2"], P["dents_n"], P["dents_h"]), 90 * s)  # +Z → -s·Y (vers l'axe)
+        dents.translate(V(0, s * Y_A, 0))
+        o = fuse(o, dents)
         oreilles.append(o)
     bloc = box(-f - x_bloc0, FOURCHE_L, 2 * R, x_bloc0, -OREILLE_OUT, -R)
     evas = loft_rects([(x_ev0, man_l, man_h, 0, 0), (x_bloc0, FOURCHE_L, 2 * R, 0, 0)])
@@ -394,6 +404,9 @@ def piece_fourche():
     canal = box(-f - X_FOND_MANCHON + 0.5 + 0.01, P["canal_l"], P["canal_h"], X_FOND_MANCHON - 0.5,
                 -P["canal_l"] / 2, -P["canal_h"] / 2)
     fk = cut(fk, canal)
+    # entonnoirs : bouche côté fenêtre (X = -fen_demi, 1,5 en Z / 1 en Y) et côté fond de manchon (0,5)
+    fk = cut(fk, entonnoir_x(-f, -1, P["canal_l"], P["canal_h"], 1.0, P["chanf_fenetre"]),
+             entonnoir_x(X_FOND_MANCHON, +1, P["canal_l"], P["canal_h"], 0.5, 0.5))
     for s in (+1, -1):
         fk = cut(fk, cylY(P["goupille_d"] / 2, s * (P["canal_l"] / 2), s * (man_l / 2 + 1), x=X_GOUPILLE))
     return fk.removeSplitter()
@@ -402,10 +415,13 @@ def piece_fourche():
 # 5. PIÈCES
 # =============================================================================================
 def piece_bras_corps(L):
-    """Corps de bras : barre 24x8 à canal fermé 18x2,4, longueur L - 2x13 (emmanchée de 21 mm à chaque bout)."""
+    """Corps de bras : barre 24x8 à canal fermé 18x2,4, longueur L - 2x13 (emmanchée de 21 mm à chaque bout),
+    bouches de canal chanfreinées (entonnoir chanf_canal)."""
     Lc = L + 2 * X_FOND_MANCHON
     c = box(Lc, P["bras_l"], P["bras_h"], 0, -P["bras_l"] / 2, -P["bras_h"] / 2)
     c = cut(c, box(Lc + 2, P["canal_l"], P["canal_h"], -1, -P["canal_l"] / 2, -P["canal_h"] / 2))
+    ch = P["chanf_canal"]
+    c = cut(c, entonnoir_x(0.0, +1, P["canal_l"], P["canal_h"], ch, ch), entonnoir_x(Lc, -1, P["canal_l"], P["canal_h"], ch, ch))
     xg = X_GOUPILLE - X_FOND_MANCHON      # -17.5 → 17.5 mm de chaque extrémité
     for x in (-xg, Lc + xg):
         for s in (+1, -1):
@@ -416,6 +432,14 @@ def piece_goupille():
     """Goupille imprimée Ø3 x 7 à tête (retient le corps de bras dans la fourche ; alternative : colle)."""
     g = fuse(cyl(P["goupille_d"] / 2 - 0.15, 6.8), cyl(3.0, 1.2, z=6.8))
     return g
+
+def chanfreins_alesage(z_haut, z_bas):
+    """Deux cônes à 45° (chanf_fut) sur les arêtes haute et basse de l'alésage Ø20 du fût : la nappe n'y frotte
+    jamais sur une arête vive (torsion de lacet, montage)."""
+    r = P["fut_alesage"] / 2; c = P["chanf_fut"]
+    haut = Part.makeCone(r, r + c + 0.01, c + 0.01, V(0, 0, z_haut - c), V(0, 0, 1))
+    bas = Part.makeCone(r + c + 0.01, r, c + 0.01, V(0, 0, z_bas - 0.01), V(0, 0, 1))
+    return [haut, bas]
 
 def piece_pied_couvercle():
     """Pied pour fixation sur couvercle : fût creux à l'origine, platine pied_cx × pied_cy décalée de pied_decal vers +y
@@ -431,7 +455,7 @@ def piece_pied_couvercle():
     conge = Part.makeCone(P["fut_d"] / 2 + 3, P["fut_d"] / 2, 3.0)
     conge = conge.common(box(cx, cy, 10, -cx / 2, P["pied_decal"] - cy / 2, -1))   # le congé ne déborde pas de la platine
     pied = fuse(pl, fut, tenon, conge)
-    return cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30))
+    return cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30), *chanfreins_alesage(P["fut_h"] + P["tenon_h"], -ep))
 
 def gabarit_couvercle_2d():
     """Motif de perçage du couvercle (repère : centre du fût) : contour de platine, trou nappe, 4 trous de vis."""
@@ -482,7 +506,7 @@ def piece_pied_plat_centre():
     tenon = cyl(P["tenon_d"] / 2, P["tenon_h"], z=P["fut_h"])
     conge = Part.makeCone(P["fut_d"] / 2 + 3, P["fut_d"] / 2, 3.0)
     pied = fuse(pl, fut, tenon, conge)
-    pied = cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30))
+    pied = cut(pied, cyl(P["fut_alesage"] / 2, 60, z=-30), *chanfreins_alesage(P["fut_h"] + P["tenon_h"], -ep))
     return pied
 
 def piece_cavalier_adaptateur():
@@ -537,8 +561,9 @@ def piece_collier():
     return col.removeSplitter()
 
 def piece_tete_coque():
-    """Coque arrière : logement PCB, plots + pions aux 4 trous, fente nappe dans la paroi basse,
-    épaulement de jupe, rainures d'encliquetage, noix de charnière sous la paroi basse."""
+    """Coque arrière : logement PCB, plots + pions aux 4 trous (référence rigide de la caméra, solidaire de la charnière),
+    fente nappe à bouches évasées dans la paroi basse, épaulement de jupe, rainures d'encliquetage, noix de charnière
+    symétrique sous la paroi basse. Imprimée sur sa paroi haute (les disques de noix dépassent de 5,2 mm derrière le fond)."""
     Lt, Ht = TETE_L, TETE_H
     ext = rrect(Lt, Ht, Z_COQUE, 3.0)
     poche = rrect(POCHE_L, POCHE_H, Z_COQUE, 1.0, z0=P["fond"])
@@ -556,16 +581,25 @@ def piece_tete_coque():
             coque = coque.fuse(cyl(P["plot_d"] / 2, Z_PCB_DOS - P["fond"] + 0.01, sx * TROU_X, yy, P["fond"]))
             coque = coque.fuse(cyl(P["pion_d"] / 2, P["pion_h"], sx * TROU_X, yy, Z_PCB_DOS))
     fente = cbox(P["canal_l"], P["paroi"] + 2, P["canal_h"], 0, -(POCHE_H / 2 + P["paroi"] / 2), Z_NAPPE_TETE)
+    cf = P["chanf_fente"]
+    ent_int = rotZ(entonnoir_x(0.0, +1, P["canal_l"], P["canal_h"], cf, cf), -90)   # bouche côté logement, intérieur vers -y
+    ent_int.translate(V(0, -POCHE_H / 2, Z_NAPPE_TETE))
+    ent_ext = rotZ(entonnoir_x(0.0, +1, P["canal_l"], P["canal_h"], cf, cf), 90)    # bouche côté fenêtre, intérieur vers +y
+    ent_ext.translate(V(0, -(POCHE_H / 2 + P["paroi"]), Z_NAPPE_TETE))
     n = noix(clip_z_max=TETE_P - Z_AXE_TETE, clip_z_min=-Z_AXE_TETE)
     n = rotZ(n, 90)                         # X_noix → +y_tête, Y_noix → -x_tête
     n.translate(V(0, Y_AXE_TETE, Z_AXE_TETE))
     coque = fuse(coque, n)
-    coque = coque.cut(fente)
+    coque = cut(coque, fente, ent_int, ent_ext)
     return coque.removeSplitter()
 
 def piece_tete_facade():
-    """Façade-capot : jupe emboîtée sur l'épaulement, 2 crochets, plaque avant avec ouverture optique,
-    4 fûts d'appui sur les trous du PCB. Imprimée face avant sur le plateau."""
+    """Façade-capot : jupe emboîtée sur l'épaulement, 2 crochets, plaque avant avec ouverture optique chanfreinée
+    à 45° côté avant, 4 fûts d'appui sur les trous du PCB dépassant de pcb_serrage. Chaque fût est porté par une
+    languette-ressort découpée dans la plaque (fente en U de ressort_fente, traversante : verticale à l'impression),
+    de sorte que le PCB est plaqué sur les plots de la coque avec une précontrainte tolérante aux cotes FDM.
+    Fûts hauts : languettes le long de x, encastrées vers le centre ; fûts bas : languettes le long de y, encastrées
+    vers la paroi basse. Imprimée face avant sur le plateau."""
     Lt, Ht = TETE_L, TETE_H
     jz = Z_COQUE - P["jupe_h"]
     cap = rrect(Lt, Ht, TETE_P - jz, 3.0, z0=jz)
@@ -579,10 +613,32 @@ def piece_tete_facade():
                V(s * (xr - P["crochet"]), -P["crochet_L"] / 2, jz + 1.8), V(s * xr, -P["crochet_L"] / 2, jz + 0.8)]
         cro = Part.Face(Part.makePolygon(pts)).extrude(V(0, P["crochet_L"], 0))
         cap = cap.fuse(cro)
-    cap = cap.cut(rrect(P["ouverture"], P["ouverture"], 10, P["ouverture_r"], OBJ_C.x, OBJ_C.y, Z_FACADE_INT - 5))
+    o, r, c = P["ouverture"], P["ouverture_r"], P["ouverture_chanfrein"]
+    cap = cap.cut(rrect(o, o, 10, r, OBJ_C.x, OBJ_C.y, Z_FACADE_INT - 5))
+    w_in = rrect_face(o, o, r, OBJ_C.x, OBJ_C.y, TETE_P - c).OuterWire
+    w_out = rrect_face(o + 2 * c + 0.02, o + 2 * c + 0.02, r + c, OBJ_C.x, OBJ_C.y, TETE_P + 0.01).OuterWire
+    cap = cap.cut(Part.makeLoft([w_in, w_out], True, True))
+    w, sl = P["ressort_l"], P["ressort_fente"]
+    zf0, zf1 = Z_FACADE_INT - 1.0, TETE_P + 1.0
+    for sx in (+1, -1):
+        # languette haute (le long de x) : racine en |x| = ressort_x0, bout en |x| = ressort_x1, fente haute affleurant la paroi
+        x0, x1 = P["ressort_x0"], P["ressort_x1"]
+        xa, xb = min(sx * x0, sx * (x1 + sl)), max(sx * x0, sx * (x1 + sl))
+        yb = TROU_Y_HAUT - w / 2
+        cap = cap.cut(box(xb - xa, sl, zf1 - zf0, xa, yb - sl, zf0))                              # fente basse
+        cap = cap.cut(box(xb - xa, POCHE_H / 2 + 0.5 - (yb + w), zf1 - zf0, xa, yb + w, zf0))    # fente haute → paroi
+        xt0, xt1 = min(sx * x1, sx * (x1 + sl)), max(sx * x1, sx * (x1 + sl))
+        cap = cap.cut(box(xt1 - xt0, POCHE_H / 2 + 0.5 - (yb - sl), zf1 - zf0, xt0, yb - sl, zf0))   # fente de bout
+        # languette basse (le long de y) : racine en y = ressort_y0 (vers la paroi basse), bout en y = ressort_y1
+        y0, y1 = P["ressort_y0"], P["ressort_y1"]
+        xl = sx * TROU_X - w / 2
+        cap = cap.cut(box(sl, y1 + sl - y0, zf1 - zf0, xl - sl, y0, zf0))
+        cap = cap.cut(box(sl, y1 + sl - y0, zf1 - zf0, xl + w, y0, zf0))
+        cap = cap.cut(box(w + 2 * sl, sl, zf1 - zf0, xl - sl, y1, zf0))
     for sx in (+1, -1):
         for yy in (TROU_Y_HAUT, TROU_Y_BAS):
-            cap = cap.fuse(cyl(P["plot_d"] / 2, Z_FACADE_INT - Z_PCB_AV + 0.5, sx * TROU_X, yy, Z_PCB_AV))
+            cap = cap.fuse(cyl(P["plot_d"] / 2, Z_FACADE_INT - Z_PCB_AV + 0.5 + P["pcb_serrage"], sx * TROU_X, yy,
+                               Z_PCB_AV - P["pcb_serrage"]))
     return cap.removeSplitter()
 
 def piece_pcb_cm3():
@@ -675,9 +731,9 @@ def main():
     pieces["04c_goupille_x4"] = piece_goupille()
     pieces["05_tete_coque"] = piece_tete_coque()
     pieces["06_tete_facade"] = piece_tete_facade()
-    pieces["07_vis_M8_L11_x2"] = vis_molettee(P["vis_L_art"])
+    pieces["07_vis_M8_L11_x4"] = vis_molettee(P["vis_L_art"])
     pieces["08_vis_M8_L20"] = vis_molettee(P["vis_L_collier"])
-    pieces["09_ecrou_rosette_x2"] = ecrou_rosette()
+    pieces["09_ecrou_rosette_x4"] = ecrou_rosette()
     pieces["10_ecrou_hex"] = ecrou_hex()
     pieces["90_maquette_cm3"] = piece_pcb_cm3()
     for k, s in pieces.items():
@@ -693,8 +749,8 @@ def main():
         "04c_goupille_x4": Placement(V(), Rot(V(1, 0, 0), 180)),           # tête sur le plateau
         "05_tete_coque": Placement(V(), Rot(V(1, 0, 0), -90)),             # paroi haute sur le plateau, noix en haut
         "06_tete_facade": Placement(V(), Rot(V(1, 0, 0), 180)),            # face avant sur le plateau
-        "07_vis_M8_L11_x2": Placement(), "08_vis_M8_L20": Placement(),
-        "09_ecrou_rosette_x2": Placement(V(), Rot(V(1, 0, 0), 0)),
+        "07_vis_M8_L11_x4": Placement(), "08_vis_M8_L20": Placement(),
+        "09_ecrou_rosette_x4": Placement(V(), Rot(V(1, 0, 0), 0)),
         "10_ecrou_hex": Placement(),
         "90_maquette_cm3": Placement(),
     }
@@ -704,20 +760,20 @@ def main():
     assert abs(fk_o.BoundBox.ZMin - X_MANCHON0) < 1e-6, fk_o.BoundBox
     # écrou-rosette : corps hexagonal vers le bas (z<0 dans son repère) → déjà « tête en haut » : dents vers le haut
     desc = {
-        "01_pied_couvercle": "Pied pour couvercle : platine 50x46 décalée (bord affleurant la paroi), 4 fentes 3,4x8, fût creux Ø26/Ø20, tenon Ø24",
+        "01_pied_couvercle": "Pied pour couvercle : platine 50x46 décalée (bord affleurant la paroi), 4 fentes 3,4x8, fût creux Ø26/Ø20 à arêtes chanfreinées, tenon Ø24",
         "01a_pied_plat_centre": "Variante : platine 46x46 centrée sur le fût",
         "01c_gabarit_percage_couvercle": "Gabarit de perçage du couvercle (plaque 1,2 mm) : trou nappe Ø22 + 4 trous Ø3,4",
         "01b_cavalier_adaptateur": "Adaptateur à cheval sur une paroi verticale (mur_ep) recevant le pied plat (2 trous Ø3,4)",
         "02_bague_retenue": "Bague emmanchée/collée sur le tenon : retient axialement le collier (jeu 0,5)",
         "03_collier_tourelle": "Collier fendu de lacet (serrage par vis imprimée M8) portant la noix d'épaule",
-        corps_key: "Corps de bras 24x8, canal fermé 18x2,4 pour la nappe, 2 trous de goupille par extrémité",
-        "04b_fourche_x2": "Embout-fourche (x2) : manchon 21 mm, oreilles R11 crantées côté A, alésage Ø8,6",
+        corps_key: "Corps de bras 24x8, canal fermé 18x2,4 à bouches chanfreinées, 2 trous de goupille par extrémité",
+        "04b_fourche_x2": "Embout-fourche (x2) : manchon 21 mm (serré 0,1), oreilles R11 crantées des deux côtés, alésages Ø8,6, bouche de canal évasée",
         "04c_goupille_x4": "Goupille Ø3 imprimée (x4) — facultative si collage",
-        "05_tete_coque": "Coque arrière Camera Module 3 : logement PCB, plots/pions, fente nappe, noix de charnière",
-        "06_tete_facade": "Façade encliquetable : ouverture optique 13 mm, 4 fûts d'appui sur le PCB",
-        "07_vis_M8_L11_x2": "Vis moletée imprimée M8 pas 2, L=11 (x2, articulations)",
+        "05_tete_coque": "Coque arrière Camera Module 3 : logement PCB, plots/pions (référence rigide), fente nappe évasée, noix symétrique",
+        "06_tete_facade": "Façade encliquetable : ouverture optique 14 chanfreinée, 4 fûts d'appui sur languettes-ressorts plaquant le PCB (0,2)",
+        "07_vis_M8_L11_x4": "Vis moletée imprimée M8 pas 2, L=11 (x4, deux par articulation)",
         "08_vis_M8_L20": "Vis moletée imprimée M8 pas 2, L=20 (collier de lacet)",
-        "09_ecrou_rosette_x2": "Écrou-rosette 24 dents (x2) : hexagone 13 dans la noix, dents vers l'oreille",
+        "09_ecrou_rosette_x4": "Écrou-rosette 24 dents (x4) : hexagone 13 × 3,5 dans la noix, dents vers l'oreille",
         "10_ecrou_hex": "Écrou hexagonal 13 imprimé (collier)",
         "90_maquette_cm3": "Encombrement Camera Module 3 (référence — ne pas imprimer)",
     }
@@ -754,12 +810,13 @@ def main():
     yA = P["noix_gap"] / 2 + P["noix_ep"]
     phases = {}
     for nom, pln in (("epaule", pl_noix_epaule()), ("tete", pl_noix_tete())):
-        pl_e = pln.multiply(Placement(V(0, yA, 0), Rot(V(1, 0, 0), -90)))
-        placed["ecrou_" + nom] = (pieces["09_ecrou_rosette_x2"], pl_e)
-        pl_v = pln.multiply(Placement(V(0, OREILLE_OUT + P["vis_tete_h"], 0), Rot(V(1, 0, 0), 90)))
-        phi, n_in = phase_vis(pl_v, placer(pieces["09_ecrou_rosette_x2"], pl_e), P["vis_L_art"])
-        phases["vis_" + nom] = (phi, n_in)
-        placed["vis_" + nom] = (pieces["07_vis_M8_L11_x2"], pl_v.multiply(Placement(V(), Rot(V(0, 0, 1), phi))))
+        for s, suf in ((+1, ""), (-1, "_B")):
+            pl_e = pln.multiply(Placement(V(0, s * yA, 0), Rot(V(1, 0, 0), -90 * s)))      # dents vers l'oreille (s·Y)
+            placed["ecrou_" + nom + suf] = (pieces["09_ecrou_rosette_x4"], pl_e)
+            pl_v = pln.multiply(Placement(V(0, s * (OREILLE_OUT + P["vis_tete_h"]), 0), Rot(V(1, 0, 0), 90 * s)))
+            phi, n_in = phase_vis(pl_v, placer(pieces["09_ecrou_rosette_x4"], pl_e), P["vis_L_art"])
+            phases["vis_" + nom + suf] = (phi, n_in)
+            placed["vis_" + nom + suf] = (pieces["07_vis_M8_L11_x4"], pl_v.multiply(Placement(V(), Rot(V(0, 0, 1), phi))))
     ro = P["collier_d"] / 2; xv = -(ro + P["patte_L"] / 2 + 1.0); zv = P["collier_h"] / 2
     pl_e = pl_collier.multiply(Placement(V(xv, 1.0 + P["patte_l"] - P["ecrou_poche"] + 0.25, zv), Rot(V(1, 0, 0), -90)))
     placed["ecrou_collier"] = (pieces["10_ecrou_hex"], pl_e)
@@ -839,15 +896,16 @@ def main():
         plt = placement_tete(plb60, L, be)
         t = fuse(placer(pieces["05_tete_coque"], plt), placer(pieces["06_tete_facade"], plt))
         inter[f"tete_vs_bras_beta{be}"] = com(b60, t)
-    # visserie vs fourches (état serré) et écrou vs noix
+    # visserie vs fourches (état serré) et écrou vs noix, des deux côtés de chaque axe
     for nom, plf in (("epaule", pl_f1), ("tete", pl_f2)):
         fk = placer(pieces["04b_fourche_x2"], plf)
-        ec = placer(*placed["ecrou_" + nom])
-        vi = placer(*placed["vis_" + nom])
-        inter[f"fourche_vs_ecrou_{nom}"] = round(fk.common(ec).Volume, 3)
-        inter[f"fourche_vs_vis_{nom}"] = round(fk.common(vi).Volume, 3)
-        inter[f"vis_vs_ecrou_{nom}(phase_alignee)"] = round(vi.common(ec).Volume, 3)
-        inter[f"vis_vs_ecrou_{nom}(distance_mini_mm)"] = round(vi.distToShape(ec)[0], 3)
+        for suf in ("", "_B"):
+            ec = placer(*placed["ecrou_" + nom + suf])
+            vi = placer(*placed["vis_" + nom + suf])
+            inter[f"fourche_vs_ecrou_{nom}{suf}"] = round(fk.common(ec).Volume, 3)
+            inter[f"fourche_vs_vis_{nom}{suf}"] = round(fk.common(vi).Volume, 3)
+            inter[f"vis_vs_ecrou_{nom}{suf}(phase_alignee)"] = round(vi.common(ec).Volume, 3)
+            inter[f"vis_vs_ecrou_{nom}{suf}(distance_mini_mm)"] = round(vi.distToShape(ec)[0], 3)
     # preuve de l'existence du filet : la même vis tournée d'un demi-tour (décalage d'un demi-pas) doit pénétrer l'écrou
     s_, pl_ = placed["vis_epaule"]
     vi180 = placer(s_, pl_.multiply(Placement(V(), Rot(V(0, 0, 1), 180))))
@@ -856,9 +914,97 @@ def main():
     inter["fourche_tete_vs_coque"] = com(placer(pieces["04b_fourche_x2"], pl_f2), placer(pieces["05_tete_coque"], pl_tete))
     inter["corps_vs_fourches"] = round(placer(pieces[corps_key], pl_corps).common(
         fuse(placer(pieces["04b_fourche_x2"], pl_f1), placer(pieces["04b_fourche_x2"], pl_f2))).Volume, 3)
-    inter["cm3_vs_coque+facade"] = round(placer(pieces["90_maquette_cm3"], pl_tete).common(
-        fuse(placer(pieces["05_tete_coque"], pl_tete), placer(pieces["06_tete_facade"], pl_tete))).Volume, 3)
+    inter["cm3_vs_coque"] = round(placer(pieces["90_maquette_cm3"], pl_tete).common(placer(pieces["05_tete_coque"], pl_tete)).Volume, 3)
+    inter["cm3_vs_facade(serrage_0.2_attendu)"] = round(placer(pieces["90_maquette_cm3"], pl_tete).common(placer(pieces["06_tete_facade"], pl_tete)).Volume, 3)
+    inter["facade_vs_coque"] = round(placer(pieces["06_tete_facade"], pl_tete).common(placer(pieces["05_tete_coque"], pl_tete)).Volume, 3)
     verif["interferences_mm3"] = inter
+
+    # ------------------------------------------------------------------------------------------
+    # MONTAGE DE LA FOURCHE SUR LA NOIX : glissement suivant X avec les deux écrous enfoncés au fond des poches
+    # (aucune interférence le long du trajet), puis écrous en position de travail (seul le recouvrement
+    # volontaire de 3 % des dents subsiste).
+    # ------------------------------------------------------------------------------------------
+    enf = P["ecrou_poche"] - P["ecrou_corps"]                     # enfoncement possible de l'écrou (1,5)
+    nx = noix(col=P["noix_col_epaule"])
+    def ecrous_noix(sink):
+        e = []
+        for s in (+1, -1):
+            e.append(placer(pieces["09_ecrou_rosette_x4"], Placement(V(0, s * (yA - sink), 0), Rot(V(1, 0, 0), -90 * s))))
+        return fuse(*e)
+    fk0 = pieces["04b_fourche_x2"]
+    glisse = {}
+    cible = fuse(nx, ecrous_noix(enf))
+    for dx in (-30, -25, -20, -15, -10, -6, -3, -1, 0):
+        glisse[f"dx{dx}"] = round(mv(fk0, dx, 0, 0).common(cible).Volume, 3)
+    verif["montage_fourche_glissement_mm3"] = dict(enfoncement_ecrous_mm=enf, trajet=glisse,
+                                                 position_travail_ecrous=round(fk0.common(fuse(nx, ecrous_noix(0.0))).Volume, 3),
+                                                 fourche_vs_noix_seule=round(fk0.common(nx).Volume, 3),
+                                                 jeu_dents_au_glissement_mm=round(Y_A - P["dents_h"] - (yA + P["jeu_AB"] - enf), 2))
+
+    # ------------------------------------------------------------------------------------------
+    # TENUE DU PCB : raideur des languettes-ressorts, précontrainte, dégagements objectif / ouverture
+    # ------------------------------------------------------------------------------------------
+    E_pla, E_petg = 3300.0, 2100.0
+    t_r = P["facade_ep"]
+    L_haut = TROU_X - P["ressort_x0"]
+    L_bas = TROU_Y_BAS - P["ressort_y0"]
+    I_r = P["ressort_l"] * t_r ** 3 / 12
+    tol = 0.15
+    def k(E, L_):
+        return 3 * E * I_r / L_ ** 3
+    k_tot_pla = 2 * (k(E_pla, L_haut) + k(E_pla, L_bas))
+    k_tot_petg = 2 * (k(E_petg, L_haut) + k(E_petg, L_bas))
+    verif["serrage_pcb"] = dict(
+        languettes_mm=dict(largeur=P["ressort_l"], epaisseur=t_r, fente=P["ressort_fente"],
+                           longueur_utile_hautes=round(L_haut, 2), longueur_utile_basses=round(L_bas, 2)),
+        raideur_N_par_mm=dict(PLA_haute=round(k(E_pla, L_haut), 1), PLA_basse=round(k(E_pla, L_bas), 1),
+                              PETG_haute=round(k(E_petg, L_haut), 1), PETG_basse=round(k(E_petg, L_bas), 1)),
+        precontrainte_nominale_mm=P["pcb_serrage"],
+        force_totale_N=dict(PLA=round(k_tot_pla * P["pcb_serrage"], 1), PETG=round(k_tot_petg * P["pcb_serrage"], 1)),
+        plage_tolerance_empilage_mm=[round(P["pcb_serrage"] - tol, 2), round(P["pcb_serrage"] + tol, 2)],
+        force_totale_N_pire_cas=dict(PLA=[round(k_tot_pla * (P["pcb_serrage"] - tol), 1), round(k_tot_pla * (P["pcb_serrage"] + tol), 1)]),
+        deformation_max_pct=round(100 * 3 * t_r * (P["pcb_serrage"] + tol) / (2 * min(L_haut, L_bas) ** 2), 2),
+        masse_pcb_g=4.0, acceleration_tenue_g=round(k_tot_pla * (P["pcb_serrage"] - tol) / (0.004 * 9.81), 0),
+        reference_camera="PCB plaqué sur les 4 plots rigides de la coque (pièce qui porte la charnière) ; les pions Ø1,8 centrent",
+    )
+    verif["objectif"] = dict(
+        hauteur_bloc_mm=P["objectif_h"], face_interieure_facade_au_dessus_pcb_mm=round(Z_FACADE_INT - Z_PCB_AV, 2),
+        degagement_axial_mm=round(P["jeu_objectif"] + P["pcb_serrage"], 2),
+        ouverture_mm=P["ouverture"], bloc_objectif_mm=P["objectif_c"],
+        jeu_lateral_par_cote_mm=round((P["ouverture"] - P["objectif_c"]) / 2, 2),
+        chanfrein_avant_mm=P["ouverture_chanfrein"],
+        demi_angle_libre_deg=round(math.degrees(math.atan((P["ouverture"] / 2 - 2.5) / (P["jeu_objectif"] + P["pcb_serrage"] + P["facade_ep"] - P["ouverture_chanfrein"]))), 1),
+        remarque="le bloc objectif ne touche jamais la façade : la caméra est référencée par son PCB (4 trous), serré sans jeu",
+    )
+    # ------------------------------------------------------------------------------------------
+    # PASSAGES DE LA NAPPE ET DE SES CONNECTEURS (largeur 16 / épaisseur ≤ 0,6 avec raidisseur)
+    # ------------------------------------------------------------------------------------------
+    verif["passages_nappe"] = {
+        "fente de tête (paroi basse)": f"{P['canal_l']:g} × {P['canal_h']:g}, entonnoirs {P['chanf_fente']:g} des deux côtés",
+        "bouche de fourche côté fenêtre": f"{P['canal_l']:g} × {P['canal_h']:g} évasée à {P['canal_l'] + 2:g} × {P['canal_h'] + 2 * P['chanf_fenetre']:g}",
+        "canal du corps": f"{P['canal_l']:g} × {P['canal_h']:g}, bouches chanfreinées {P['chanf_canal']:g}",
+        "fenêtre de noix": f"{P['noix_gap']:g} entre plaques",
+        "alésage du fût": f"Ø{P['fut_alesage']:g}, arêtes chanfreinées {P['chanf_fut']:g}",
+        "trou du couvercle": f"Ø{P['couvercle_trou']:g} (à chanfreiner/ébavurer)",
+        "connecteurs": "Standard 15 voies : 16 × ≈0,6 ; Mini 22 voies : ≤ 16 × ≈0,6 → passent partout",
+        "verrou du connecteur CM3": f"coulisse vers le bord bas du PCB : inopérable PCB en place (jeu {P['pcb_jeu_h'] / 2:g} mm) → brancher la nappe AVANT de poser le PCB",
+    }
+    # ------------------------------------------------------------------------------------------
+    # VIBRATIONS : premier mode du bras (console 150 mm, masse en bout)
+    # ------------------------------------------------------------------------------------------
+    rho = 1.24e-3  # g/mm³ PLA
+    m_tete = (pieces["05_tete_coque"].Volume + pieces["06_tete_facade"].Volume) * rho * 0.85 + 4.0 \
+             + pieces["04b_fourche_x2"].Volume * rho * 0.6 + 2 * (pieces["07_vis_M8_L11_x4"].Volume + pieces["09_ecrou_rosette_x4"].Volume) * rho
+    m_corps = pieces[corps_key].Volume * rho * 0.6
+    I_faible = (P["bras_l"] * P["bras_h"] ** 3 - P["canal_l"] * P["canal_h"] ** 3) / 12
+    I_fort = (P["bras_h"] * P["bras_l"] ** 3 - P["canal_h"] * P["canal_l"] ** 3) / 12
+    def f1(E, I):
+        k = 3 * E * I / L ** 3                         # N/mm
+        return round(math.sqrt(k * 1000 / ((m_tete + 0.24 * m_corps) / 1000)) / (2 * math.pi), 0)
+    verif["vibrations"] = dict(masse_en_bout_g=round(m_tete, 1), masse_corps_g=round(m_corps, 1),
+                               f1_Hz=dict(PLA_plan_faible=f1(E_pla, I_faible), PLA_plan_fort=f1(E_pla, I_fort),
+                                          PETG_plan_faible=f1(E_petg, I_faible)),
+                               remarque="sources (pas, ventilateur du Pi 5 : 30-130 Hz) d'amplitude micrométrique ; sans jeu dans la chaîne, l'image ne bouge pas")
     # rayon de pliage de la nappe dans la fenêtre (corde entre sortie et entrée de canal, arc tangent)
     f = P["fen_demi"]
     rayons = {}

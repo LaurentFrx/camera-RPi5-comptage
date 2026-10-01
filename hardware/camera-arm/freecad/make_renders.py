@@ -72,15 +72,15 @@ for pose, titre in (("repos", "Pose « repos » : bras vertical, tête dans le p
     go("05_pose_" + pose, {"view": "iso", "parts": parts_from_dir(d), "scale_bar_mm": 50, "title": titre})
 
 # ---- 3. détails : articulation d'épaule éclatée le long de l'axe Y ---------------------------------
-off = {"vis_epaule": T(0, 34, 0), "ecrou_epaule": T(0, 14, 0)}
+off = {"vis_epaule": T(0, 34, 0), "ecrou_epaule": T(0, 14, 0), "vis_epaule_B": T(0, -34, 0), "ecrou_epaule_B": T(0, -14, 0)}
 go("06_detail_epaule_eclate", {"view": [40, 24], "scale_bar_mm": 20,
-    "parts": parts_from_dir(A, names=["collier", "fourche_epaule", "vis_epaule", "ecrou_epaule", "bague", "pied", "bras_corps"], offsets=off),
-    "title": "Articulation d'épaule (éclaté suivant l'axe) : noix du collier → écrou-rosette → oreille crantée → vis moletée",
-    "subtitle": "l'écrou-rosette (hexagone 13) est prisonnier de la noix ; ses 24 dents s'emboîtent dans celles de l'oreille (pas 15°) ; la nappe passe entre les deux plaques de noix"})
-off2 = {"vis_tete": T(0, 34, 0), "ecrou_tete": T(0, 14, 0)}
+    "parts": parts_from_dir(A, names=["collier", "fourche_epaule", "vis_epaule", "ecrou_epaule", "vis_epaule_B", "ecrou_epaule_B", "bague", "pied", "bras_corps"], offsets=off),
+    "title": "Articulation d'épaule éclatée suivant l'axe : vis → oreille crantée → écrou-rosette → noix, des deux côtés",
+    "subtitle": "charnière symétrique : un écrou-rosette (hexagone 13) prisonnier de chaque plaque de noix, 24 dents (pas 15°) emboîtées dans chaque oreille, une vis par côté"})
+off2 = {"vis_tete": T(0, 34, 0), "ecrou_tete": T(0, 14, 0), "vis_tete_B": T(0, -34, 0), "ecrou_tete_B": T(0, -14, 0)}
 go("07_detail_tete_eclate", {"view": [40, 24], "scale_bar_mm": 20,
-    "parts": parts_from_dir(A, names=["tete_coque", "tete_facade", "cm3", "fourche_tete", "vis_tete", "ecrou_tete"], offsets=off2),
-    "title": "Articulation de tête (éclaté suivant l'axe) et boîtier caméra fermé"})
+    "parts": parts_from_dir(A, names=["tete_coque", "tete_facade", "cm3", "fourche_tete", "vis_tete", "ecrou_tete", "vis_tete_B", "ecrou_tete_B"], offsets=off2),
+    "title": "Articulation de tête éclatée suivant l'axe (deux vis, deux écrous-rosette) et boîtier caméra fermé"})
 
 # ---- 4. tête caméra éclatée (repère de conception : z = profondeur, avant = +z) --------------------
 go("08_tete_eclatee", {"view": [-55, 28], "scale_bar_mm": 10,
@@ -88,13 +88,17 @@ go("08_tete_eclatee", {"view": [-55, 28], "scale_bar_mm": 10,
               {"file": os.path.join(C, "90_maquette_cm3.stl"), "color": COL["cm3"], "transform": T(0, 0, 14)},
               {"file": os.path.join(C, "06_tete_facade.stl"), "color": COL["tete_facade"], "transform": T(0, 0, 30)}],
     "title": "Tête caméra éclatée : coque arrière (noix de charnière, plots + pions Ø1,8) · Camera Module 3 · façade encliquetable",
-    "subtitle": "le PCB est pris en sandwich sur ses 4 trous (plots Ø3,6 arrière + fûts Ø3,6 avant) : aucune vis M2"})
+    "subtitle": "PCB plaqué sur les 4 plots de la coque par les 4 fûts de la façade, portés par des languettes-ressorts (précontrainte 0,2 mm) : zéro vis M2, zéro jeu"})
 go("09_tete_coque_interieur", {"view": [-60, 55], "scale_bar_mm": 10,
     "parts": [{"file": os.path.join(C, "05_tete_coque.stl"), "color": COL["tete_coque"]}],
-    "title": "Coque arrière : logement PCB 25,6 × 24,4, épaulement de jupe, rainures d'encliquetage, fente nappe 18 × 2,4 dans la paroi basse"})
+    "title": "Coque arrière : logement PCB, épaulement de jupe, rainures d'encliquetage, fente nappe 18 × 2,4 évasée, noix symétrique"})
 go("10_tete_facade_interieur", {"view": [-60, -50], "scale_bar_mm": 10,
     "parts": [{"file": os.path.join(C, "06_tete_facade.stl"), "color": COL["tete_facade"]}],
-    "title": "Façade vue de l'intérieur : jupe 1,2 mm + 2 crochets, 4 fûts d'appui, ouverture optique 13 mm (r 3)"})
+    "title": "Façade vue de l'intérieur : jupe 1,2 + 2 crochets, 4 fûts d'appui sur languettes-ressorts, ouverture optique 14 (r 3)"})
+go("11_tete_facade_face", {"view": "top", "scale_bar_mm": 10,
+    "parts": [{"file": os.path.join(C, "06_tete_facade.stl"), "color": COL["tete_facade"]}],
+    "title": "Façade de face : ouverture 14 chanfreinée 0,6 à 45°, 4 languettes-ressorts (fentes 0,6 en U) portant les fûts d'appui",
+    "subtitle": "languettes hautes : le long de x, encastrées vers le centre (8,5 mm utiles) ; basses : le long de y, encastrées vers la paroi basse (7,9 mm)"})
 
 # ---- 5. pièces seules, orientation d'impression (plateau = z = 0) -------------------------------
 pieces = [
@@ -106,12 +110,12 @@ pieces = [
     ("03_collier_tourelle", "Collier-tourelle : anneau fendu Ø34/Ø26,3 × 12, pattes de serrage, noix d'épaule — imprimé debout"),
     ("04a_bras_corps_L150", "Corps de bras 124 × 24 × 8 (entraxe 150), canal 18 × 2,4 traversant — imprimé à plat (pont de 18 mm)"),
     ("04a_bras_corps_L170_alt", "Corps de bras alternatif 144 × 24 × 8 (entraxe 170) — si la mesure de nappe le permet"),
-    ("04b_fourche_x2", "Fourche (×2) — imprimée debout sur l'ouverture du manchon : oreilles verticales, crantage sans surplomb"),
-    ("05_tete_coque", "Coque de tête — imprimée sur sa paroi haute, noix vers le haut"),
-    ("06_tete_facade", "Façade — imprimée face avant sur le plateau"),
-    ("07_vis_M8_L11_x2", "Vis moletée M8 pas 2 L11 (×2) — tête sur le plateau, filet vertical"),
+    ("04b_fourche_x2", "Fourche (×2) — imprimée debout sur le manchon : oreilles verticales crantées des deux côtés, entonnoir de canal"),
+    ("05_tete_coque", "Coque de tête — imprimée sur sa paroi haute, noix (symétrique) vers le haut"),
+    ("06_tete_facade", "Façade — imprimée face avant sur le plateau (fentes de ressort verticales)"),
+    ("07_vis_M8_L11_x4", "Vis moletée M8 pas 2 L11 (×4) — tête sur le plateau, filet vertical"),
     ("08_vis_M8_L20", "Vis moletée M8 pas 2 L20 (collier)"),
-    ("09_ecrou_rosette_x2", "Écrou-rosette (×2) — hexagone sur le plateau, cône 45°, dents vers le haut"),
+    ("09_ecrou_rosette_x4", "Écrou-rosette (×4) — hexagone 3,5 sur le plateau, cône 45°, dents vers le haut"),
     ("10_ecrou_hex", "Écrou hexagonal 13 × 5"),
     ("04c_goupille_x4", "Goupille Ø3 × 7 à tête (×4, facultative)"),
 ]
