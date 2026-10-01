@@ -1,6 +1,6 @@
 # Étude détaillée — bras articulé 3 axes et boîtier pour Camera Module 3 sur boîtier Raspberry Pi 5
 
-**Projet** : camera-RPi5-comptage · **Imprimante** : Prusa (Biscalab) · **Date** : 30/09/2026, **révision du 01/10/2026** (vérification du passage de la nappe et de la tenue de la caméra, § 16)
+**Projet** : camera-RPi5-comptage · **Imprimante** : Prusa (Biscalab) · **Date** : 30/09/2026, **révisions du 01/10/2026** (vérification du passage de la nappe et de la tenue de la caméra, § 16 ; jeu de filetage calé à 0,3 après l'essai d'impression, § 6.6)
 **Livrables** : cette étude, la macro FreeCAD paramétrique (`freecad/bras_camera_cm3.py`), les fichiers natifs FreeCAD `.FCStd` (une pièce par fichier + un assemblage), les STEP, les STL orientés pour l'impression, les rendus et le rapport de contrôle (`export/rapport.json`).
 
 > **Outillage — point important.** Cette session cloud n'avait **aucun connecteur MCP FreeCAD** : il n'en existe pas dans le registre de connecteurs claude.ai, et les « FreeCAD MCP » communautaires sont des ponts locaux vers une instance FreeCAD graphique tournant sur la machine de l'utilisateur. J'ai donc installé **FreeCAD lui-même** (paquet conda-forge, version 26.3) dans le conteneur et piloté son API Python en mode headless (`freecadcmd`), c'est-à-dire exactement ce qu'un connecteur MCP FreeCAD ferait sous le capot. Résultat : de vrais documents `.FCStd` ouvrables dans ton FreeCAD, et une macro que tu peux rejouer chez toi pour tout régénérer avec d'autres paramètres.
@@ -195,17 +195,17 @@ Barre 24 × 8 × 124 (= `bras_L` − 26), canal 18 × 2,4 débouchant à **bouch
 | Écrou hexagonal 13 × 5 | 1 | collier |
 | Goupille Ø3 × 7 à tête | 4 | emmanchement corps/fourches (facultatif si collage) |
 
-Filet : profil 60° aplati (crête plate 0,35, fond plat 0,5), profondeur 0,9, noyau Ø6, **jeu radial écrou 0,4** (0,8 sur le diamètre). Le pas de 2 mm est délibérément « gros » : c'est ce qui rend un filet FDM fiable avec une buse 0,4.
+Filet : profil 60° aplati (crête plate 0,35, fond plat 0,5), profondeur 0,9, noyau Ø6, **jeu radial écrou 0,3** (0,6 sur le diamètre ; valeur calée par l'essai d'impression du 01/10 : à 0,4 la vis flottait dans l'écrou). Le pas de 2 mm est délibérément « gros » : c'est ce qui rend un filet FDM fiable avec une buse 0,4.
 
 **Construction et vérification du filetage** (correction du 30/09, à la suite de ta demande de vérifier la vis). La première version construisait le filet par balayage hélicoïdal du profil puis fusion avec le noyau : OCCT échouait silencieusement sur ce booléen et **les vis livrées étaient des cylindres lisses, les écrous des trous lisses**. La macro construit maintenant la tige filetée par **loft lisse de sections complètes** : chaque section transversale est un polygone de 48 points dont le rayon suit le profil de filet en fonction de l'angle, et la section tourne avec z (12 sections par pas). Noyau et filet forment un seul solide, sans aucun booléen fragile ; la tête est fusionnée avec 1 mm de pénétration, la pointe est conique (réduction des dernières sections). Les écrous sont obtenus par découpe d'une « vis virtuelle » majorée du jeu. Contrôles automatiques dans la macro :
 
-* présence des gorges dans chaque écrou (alternance matière/vide au rayon moyen du filet : 7 transitions sur l'écrou-rosette, 5 sur l'écrou hexagonal) ;
-* dans l'assemblage, chaque vis est tournée sur son axe à la phase qui centre ses crêtes dans les gorges de son écrou (épaule 180° / 180°, tête 180° / 180°, collier 315°) ; volume d'interpénétration vis/écrou à cette phase : **0 mm³** (pire des 4 vis d'articulation), distance mini 0,201 mm ;
-* preuve d'existence du filet : la même vis tournée d'un demi-tour (décalage d'un demi-pas) pénètre l'écrou de **16,491 mm³**.
+* présence des gorges dans chaque écrou (alternance matière/vide au rayon moyen du filet : 6 transitions sur l'écrou-rosette, 5 sur l'écrou hexagonal) ;
+* dans l'assemblage, chaque vis est tournée sur son axe à la phase qui centre ses crêtes dans les gorges de son écrou (épaule 180° / 180°, tête 180° / 180°, collier 315°) ; volume d'interpénétration vis/écrou à cette phase : **0 mm³** (pire des 4 vis d'articulation), distance mini 0,148 mm ;
+* preuve d'existence du filet : la même vis tournée d'un demi-tour (décalage d'un demi-pas) pénètre l'écrou de **20,849 mm³**.
 
 ![Vérification du filetage](renders/43_verification_filetage.png)
 
-Le lissage B-spline arrondit légèrement les angles du profil et consomme une partie du jeu aux coins : c'est pourquoi le jeu nominal est passé de 0,3 à 0,4 mm. Si l'essai d'impression (vis + écrou, 25 min) tourne trop dur, passer `vis_jeu` à 0,5 ; s'il flotte, revenir à 0,3.
+Le lissage B-spline arrondit légèrement les angles du profil et consomme une partie du jeu aux coins ; le jeu avait donc été porté de 0,3 à 0,4 par prudence. **Essai d'impression du 01/10 (PLA, CORE One HF0.4, couches 0,15)** : à 0,4 la vis flotte dans l'écrou (taraudage trop large). Le jeu nominal est **revenu à 0,3** (−0,2 sur le diamètre du taraudage) ; la vis ne dépend pas du jeu, celle déjà imprimée reste bonne. Si l'écrou à 0,3 tourne trop dur, 0,35 est l'étape suivante ; s'il flotte encore, 0,25.
 
 ---
 
@@ -238,7 +238,7 @@ Consignes de montage de la nappe (séquence détaillée au § 10, vérification 
 ## 8. Vérifications effectuées (automatiques, dans la macro)
 
 * **Validité géométrique** : 17 solides `isValid()` = vrai, 1 seul solide par pièce (la façade en produisait 5 avant correction des fûts d'appui ; les languettes-ressorts et les entonnoirs n'ont rien changé).
-* **Filetage** (§ 6.6) : gorges présentes dans les deux écrous (6 et 5 transitions), interpénétration vis/écrou 0 mm³ à la phase alignée (pire des 4 vis d'articulation) contre 16,491 mm³ à un demi-pas de décalage, distance mini 0,201 mm. Ce contrôle a été ajouté après la découverte que la première construction produisait des vis lisses.
+* **Filetage** (§ 6.6) : gorges présentes dans les deux écrous (6 et 5 transitions), interpénétration vis/écrou 0 mm³ à la phase alignée (pire des 4 vis d'articulation) contre 20,849 mm³ à un demi-pas de décalage, distance mini 0,148 mm (jeu 0,3). Ce contrôle a été ajouté après la découverte que la première construction produisait des vis lisses.
 * **Concordance des axes** : axe local du bras sur l'axe d'épaule (0, 0, 28) ; écart axe de tête = 0,000 mm.
 * **Interférences** (volumes communs, mm³) : 0 pour épaule 0/30/60/90/100°, tête 0/30/60/90/120/135° ; fourche/collier 0 ; fourche/coque 0 ; corps/fourches 0 ; vis/oreilles 0 ; filets vis/écrou 0 ; façade/coque 0. Valeurs non nulles **attendues** : oreilles/écrous-rosette 5,086, 5,064, 4,589, 4,589 mm³ (dents modélisées avec 3 % de recouvrement pour la robustesse booléenne), maquette CM3/coque 0,257 mm³ (recouvrement volontaire de 0,01 mm des plots), **maquette CM3/façade 5,145 mm³ = les 4 fûts qui dépassent de 0,2 mm** (précontrainte des languettes, § 6.5).
 * **Montage de la fourche sur la noix** (révision du 01/10) : fourche glissée suivant X de −30 à 0 mm par pas, écrous enfoncés de 1,5 mm : interférence maximale 0 mm³ sur tout le trajet, fourche/noix seule 0 mm³, jeu dents/dents au passage 0,5 mm ; écrous ramenés en position de travail : 9,558 mm³ (le recouvrement volontaire des dents).
@@ -287,7 +287,7 @@ Total ≈ 87 cm³ « pleins », soit ≈ 75 à 85 g une fois remplis à 25 % ; d
 * PETG, buse 0,4, couches 0,2 (0,15 pour la visserie et les écrous) ; 3 périmètres (4 pour les fourches et le collier) ; remplissage gyroïde 25 % (100 % pour vis, écrous, goupilles, bague).
 * Pas de supports ; brim 5 mm pour les fourches et le collier ; ventilation PETG normale ; température de lit propre à ton filament.
 * **Tout en PLA** (ton choix pour l'impression définitive) : couches 0,15 partout, 4 périmètres, 100 % de remplissage pour la visserie, les écrous, la façade (languettes) et les fourches, 25–40 % gyroïde ailleurs, 215 °C / lit 60 °C, ventilation 100 % dès la 3ᵉ couche, aucun support. Le PLA flue sous précontrainte : resserrer les 5 vis après 24 h puis après la première semaine ; il ramollit vers 55–60 °C : pas de pose derrière une vitre en plein soleil ni dans un boîtier qui chauffe. Les languettes de façade travaillent à ≤ 1,3 % de déformation (relaxation possible de la force, jamais perte de contact) ; la rosette crantée tient l'angle sans dépendre du serrage résiduel.
-* Ordre conseillé : **d'abord le kit de calibration du filetage** `export/stl/20_kit_calibration_plateau.stl` (≈ 25 min) : une vis L11 et un écrou-rosette au jeu nominal de 0,4 mm. L'écrou doit s'engager sans forcer et tourner avec deux doigts sans jeu perceptible ; trop dur → `vis_jeu` 0,5, trop libre → 0,3, puis régénérer. Seuls les écrous dépendent du jeu : les vis définitives peuvent être imprimées dès ce premier essai. Le kit est produit par `freecad/kit_calibration.py` ; avec `JEUX="0.3,0.4,0.5"` il sort un kit comparatif de trois écrous marqués 1, 2 et 3 points.
+* Ordre conseillé : **d'abord le kit de calibration du filetage** `export/stl/20_kit_calibration_plateau.stl` (≈ 25 min) : une vis L11 et un écrou-rosette au jeu nominal. L'écrou doit s'engager sans forcer et tourner avec deux doigts sans jeu perceptible ; trop dur → augmenter `vis_jeu` de 0,05 à 0,1, trop libre → le diminuer d'autant, puis régénérer. Seuls les écrous dépendent du jeu : les vis définitives peuvent être imprimées dès ce premier essai. **Résultat du 01/10** : le premier kit (0,4) flottait ; le kit livré est maintenant à **0,3**, seul l'écrou `20_kit_calibration_ecrou_rosette_jeu03.stl` serait à réimprimer pour confirmer avant le kit complet (étape facultative). Le kit est produit par `freecad/kit_calibration.py` ; avec `JEUX="0.3,0.4,0.5"` il sort un kit comparatif de trois écrous marqués 1, 2 et 3 points.
 
 ![Kit de calibration](renders/44_kit_calibration_filetage.png)
 
@@ -301,13 +301,13 @@ Total ≈ 87 cm³ « pleins », soit ≈ 75 à 85 g une fois remplis à 25 % ; d
 | PCB dans la coque | 0,3 / 0,27 par côté | `pcb_jeu_l`, `pcb_jeu_h` |
 | Jupe de façade sur épaulement | 0,15 par côté | `jupe_jeu` |
 | Hexagone dans les poches | 0,3 | `ecrou_jeu` |
-| Filet vis / écrou | 0,4 radial (le lissage B-spline en consomme une partie aux angles) | `vis_jeu` |
+| Filet vis / écrou | **0,3 radial** (calé par l'essai du 01/10 ; 0,4 flottait) | `vis_jeu` |
 | Alésage d'oreille / filet de vis Ø7,8 | 0,4 radial (la position est donnée par les dents, pas par l'alésage) | `oreille_trou` |
 | Fûts de façade / face avant du PCB | **−0,2 (précontrainte)**, absorbée par les languettes | `pcb_serrage` |
 | Bloc objectif / face intérieure de la façade | 1,5 (+0,2 de serrage) | `jeu_objectif` |
 | Bloc objectif / ouverture 14 | 1,25 par côté | `ouverture` |
 
-Si ta Prusa imprime « gras » (trous étroits), augmente `vis_jeu` à 0,5 et `collier_jeu` à 0,4, puis régénère (§ 14). Si le collier ne serre pas assez : réduire `collier_jeu` ou élargir `fente_collier`.
+Si ta Prusa imprime « gras » (trous étroits), augmente `vis_jeu` et `collier_jeu` de 0,1, puis régénère (§ 14) ; l'essai du 01/10 montre au contraire qu'elle imprime plutôt « maigre » sur les taraudages. Si le collier ne serre pas assez : réduire `collier_jeu` ou élargir `fente_collier`.
 
 ---
 
@@ -402,7 +402,7 @@ Le modèle est paramétrique **par le script** (relancer = tout régénérer, y 
 | Risque | Effet | Parade |
 |---|---|---|
 | Nappe trop courte (tronçons estimés) | impossible de brancher | mesurer (§ 12), `bras_L` ou câble 500 |
-| Filet imprimé trop serré / trop lâche | vis bloquée ou écrou qui tourne | impression de calibration ; `vis_jeu` (0,4 nominal, 0,3 à 0,5 selon la machine) |
+| Filet imprimé trop serré / trop lâche | vis bloquée ou écrou qui tourne | impression de calibration ; `vis_jeu` (0,3 calé sur ta machine le 01/10 ; 0,25 à 0,5 selon la machine) |
 | Fluage PLA/PETG sous précontrainte | perte de serrage | rosette crantée (tenue positive, des deux côtés) ; resserrer à 24 h et après une semaine |
 | PLA au-delà de 55 °C | ramollissement, perte des précontraintes | pas de soleil direct derrière une vitre ; PETG pour la visserie et la façade si doute |
 | Languette de façade cassée au montage | fût libre, PCB mal plaqué | fentes 0,6 : ne pas forcer la façade de travers ; 100 % de remplissage pour la façade ; réimprimer (4,8 cm³) |
@@ -441,6 +441,6 @@ Demande : s'assurer que la nappe et ses connecteurs s'enfilent facilement dans l
 
 ### 16.3 Ce qui change dans les fichiers
 
-`07_vis_M8_L11_x4` et `09_ecrou_rosette_x4` (quantités 4), `04b_fourche_x2` (crantée des deux côtés, entonnoir), `04a_bras_corps_*` (bouches chanfreinées), `05_tete_coque` (noix symétrique, fente évasée), `06_tete_facade` (languettes, ouverture 14 chanfreinée, fûts +0,2, profondeur de tête 18,5 au lieu de 17), `01_pied_couvercle` et `01a` (alésage chanfreiné). Paramètres nouveaux : `chanf_canal`, `chanf_fenetre`, `chanf_fente`, `chanf_fut`, `pcb_serrage`, `ressort_*`, `ouverture_chanfrein` ; modifiés : `ecrou_corps` 3,5, `manchon_jeu` 0,1, `ouverture` 14, `objectif_h` 8,5, `jeu_objectif` 1,5, `pion_h` 0,8 ; supprimés : `axe_d`, `boss_B_*`, `axe_long`. Le kit de calibration en cours d'impression reste valable (même filet).
+`07_vis_M8_L11_x4` et `09_ecrou_rosette_x4` (quantités 4), `04b_fourche_x2` (crantée des deux côtés, entonnoir), `04a_bras_corps_*` (bouches chanfreinées), `05_tete_coque` (noix symétrique, fente évasée), `06_tete_facade` (languettes, ouverture 14 chanfreinée, fûts +0,2, profondeur de tête 18,5 au lieu de 17), `01_pied_couvercle` et `01a` (alésage chanfreiné). Paramètres nouveaux : `chanf_canal`, `chanf_fenetre`, `chanf_fente`, `chanf_fut`, `pcb_serrage`, `ressort_*`, `ouverture_chanfrein` ; modifiés : `ecrou_corps` 3,5, `manchon_jeu` 0,1, `ouverture` 14, `objectif_h` 8,5, `jeu_objectif` 1,5, `pion_h` 0,8 ; supprimés : `axe_d`, `boss_B_*`, `axe_long`. Le kit de calibration imprimé le 01/10 (jeu 0,4) a montré une vis flottante : le jeu est passé à 0,3 (écrou à réimprimer, vis conservée).
 
 ![Façade de face](renders/11_tete_facade_face.png)

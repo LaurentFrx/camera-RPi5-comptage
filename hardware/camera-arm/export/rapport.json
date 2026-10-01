@@ -38,7 +38,7 @@
   "vis_dmaj": 7.8,
   "vis_pas": 2.0,
   "vis_prof": 0.9,
-  "vis_jeu": 0.4,
+  "vis_jeu": 0.3,
   "vis_tete_d": 18.0,
   "vis_tete_h": 5.0,
   "vis_crete": 0.35,
@@ -280,7 +280,7 @@
   },
   "09_ecrou_rosette_x4": {
    "valide": true,
-   "volume_cm3": 1.07,
+   "volume_cm3": 1.08,
    "encombrement": [
     21.4,
     21.4,
@@ -290,7 +290,7 @@
   },
   "10_ecrou_hex": {
    "valide": true,
-   "volume_cm3": 0.5,
+   "volume_cm3": 0.51,
    "encombrement": [
     15.0,
     13.0,
@@ -315,11 +315,11 @@
    "ecrou_hex": 5
   },
   "plage_phase_libre_deg": [
-   165.0,
-   165.0,
-   165.0,
-   165.0,
-   165.0
+   145.0,
+   145.0,
+   145.0,
+   145.0,
+   145.0
   ],
   "phase_vis_deg_et_points_de_crete_dans_ecrou": {
    "vis_epaule": [
@@ -458,20 +458,20 @@
    "fourche_vs_ecrou_epaule": 5.086,
    "fourche_vs_vis_epaule": 0.0,
    "vis_vs_ecrou_epaule(phase_alignee)": 0.0,
-   "vis_vs_ecrou_epaule(distance_mini_mm)": 0.201,
+   "vis_vs_ecrou_epaule(distance_mini_mm)": 0.148,
    "fourche_vs_ecrou_epaule_B": 5.064,
    "fourche_vs_vis_epaule_B": 0.0,
    "vis_vs_ecrou_epaule_B(phase_alignee)": 0.0,
-   "vis_vs_ecrou_epaule_B(distance_mini_mm)": 0.201,
+   "vis_vs_ecrou_epaule_B(distance_mini_mm)": 0.148,
    "fourche_vs_ecrou_tete": 4.589,
    "fourche_vs_vis_tete": 0.0,
    "vis_vs_ecrou_tete(phase_alignee)": 0.0,
-   "vis_vs_ecrou_tete(distance_mini_mm)": 0.201,
+   "vis_vs_ecrou_tete(distance_mini_mm)": 0.148,
    "fourche_vs_ecrou_tete_B": 4.589,
    "fourche_vs_vis_tete_B": 0.0,
    "vis_vs_ecrou_tete_B(phase_alignee)": 0.0,
-   "vis_vs_ecrou_tete_B(distance_mini_mm)": 0.201,
-   "vis_vs_ecrou_epaule(phase+180deg)": 16.491,
+   "vis_vs_ecrou_tete_B(distance_mini_mm)": 0.148,
+   "vis_vs_ecrou_epaule(phase+180deg)": 20.849,
    "fourche_epaule_vs_collier": 0.0,
    "fourche_tete_vs_coque": 0.0,
    "corps_vs_fourches": 0.0,
@@ -583,5 +583,5 @@
    "marge_mm": 41.6
   }
  },
- "duree_s": 575.3
+ "duree_s": 580.7
 }

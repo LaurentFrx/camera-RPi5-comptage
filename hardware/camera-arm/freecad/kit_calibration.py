@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-kit_calibration.py — kit d'essai du filetage imprimé : 1 vis M8 L11 + 1 écrou-rosette au jeu nominal (vis_jeu = 0,4 mm).
+kit_calibration.py — kit d'essai du filetage imprimé : 1 vis M8 L11 + 1 écrou-rosette au jeu nominal (vis_jeu = 0,3 mm depuis l'essai du 01/10 : à 0,4 la vis flottait).
 Avec JEUX="0.3,0.4,0.5", produit à la place un kit comparatif de 3 écrous marqués 1, 2 et 3 points. À exécuter avec freecadcmd :
 
   OUT_DIR=<dossier_export> freecadcmd -c "exec(open('kit_calibration.py', encoding='utf-8').read())"

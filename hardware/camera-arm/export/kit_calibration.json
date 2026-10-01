@@ -1,17 +1,17 @@
 {
  "jeux": [
-  0.4
+  0.3
  ],
  "pieces": {
   "vis_M8_L11": {
    "valide": true,
    "volume_cm3": 1.49
   },
-  "20_kit_calibration_ecrou_rosette_jeu04": {
-   "jeu_radial": 0.4,
+  "20_kit_calibration_ecrou_rosette_jeu03": {
+   "jeu_radial": 0.3,
    "marquage_points": 0,
    "valide": true,
-   "volume_cm3": 1.07,
+   "volume_cm3": 1.08,
    "taraudage_transitions": 6
   }
  },
