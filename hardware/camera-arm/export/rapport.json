@@ -95,20 +95,21 @@
   "fente_pos": 17.0,
   "pied_cx": 50.0,
   "pied_cy": 46.0,
-  "pied_decal": 10.0,
+  "pied_decal": 7.0,
   "fente_x": 19.0,
   "fente_y_av": -8.0,
-  "fente_y_ar": 24.0,
+  "fente_y_ar": 22.0,
   "couvercle_trou": 22.0,
   "gabarit_ep": 1.2,
   "bras_L_alt": 170.0,
   "fut_d": 26.0,
   "fut_alesage": 20.0,
-  "fut_h": 12.5,
-  "tenon_d": 24.0,
-  "tenon_h": 3.0,
-  "bague_d": 32.0,
-  "bague_jeu": 0.1,
+  "fut_h": 11.5,
+  "rainure_z": 6.0,
+  "rainure_l": 3.4,
+  "rainure_prof": 1.2,
+  "boss_goupille_d": 8.0,
+  "boss_goupille_L": 2.0,
   "collier_d": 34.0,
   "collier_jeu": 0.3,
   "collier_h": 12.0,
@@ -140,21 +141,21 @@
  "pieces": {
   "01_pied_couvercle": {
    "valide": true,
-   "volume_cm3": 10.87,
+   "volume_cm3": 9.57,
    "encombrement": [
     50.0,
-    49.0,
-    19.5
+    46.0,
+    15.5
    ],
    "solides": 1
   },
   "01a_pied_plat_centre": {
    "valide": true,
-   "volume_cm3": 10.18,
+   "volume_cm3": 8.84,
    "encombrement": [
     46.0,
     46.0,
-    19.5
+    15.5
    ],
    "solides": 1
   },
@@ -178,21 +179,11 @@
    ],
    "solides": 1
   },
-  "02_bague_retenue": {
-   "valide": true,
-   "volume_cm3": 1.03,
-   "encombrement": [
-    32.0,
-    32.0,
-    3.0
-   ],
-   "solides": 1
-  },
   "03_collier_tourelle": {
    "valide": true,
-   "volume_cm3": 8.71,
+   "volume_cm3": 8.69,
    "encombrement": [
-    43.0,
+    45.0,
     34.0,
     38.0
    ],
@@ -228,7 +219,7 @@
    ],
    "solides": 1
   },
-  "04c_goupille_x4": {
+  "04c_goupille_x5": {
    "valide": true,
    "volume_cm3": 0.08,
    "encombrement": [
@@ -399,6 +390,15 @@
     0.5
    ]
   },
+  "retenue_collier": {
+   "goupille_dans_rainure_mm": 0.8,
+   "rainure": {
+    "z": 6.0,
+    "largeur": 3.4,
+    "profondeur": 1.2
+   },
+   "jeu_axial_goupille_rainure_mm": 0.5
+  },
   "interferences_mm3": {
    "bras_vs_base_epaule0": 0.0,
    "bras_vs_base_epaule30": 0.0,
@@ -406,34 +406,34 @@
    "bras_vs_base_epaule90": 0.0,
    "bras_vs_base_epaule100": 0.0,
    "bras_vs_base_epaule105": [
-    5.713,
+    4.021,
     [
-     -16.0,
-     -23.0,
+     -10.0,
+     -15.0,
      12.0,
-     24.3,
-     23.0,
+     12.4,
+     15.0,
      38.0
     ]
    ],
    "bras_vs_base_epaule110": [
-    61.43,
+    42.473,
     [
-     -16.0,
+     -10.0,
      -23.0,
-     0.0,
-     32.9,
+     11.2,
+     23.0,
      23.0,
      38.0
     ]
    ],
    "bras_vs_base_epaule120": [
-    419.996,
+    359.802,
     [
-     -16.0,
+     -10.0,
      -23.0,
-     -44.0,
-     120.6,
+     8.5,
+     19.9,
      23.0,
      38.0
     ]
@@ -445,38 +445,42 @@
    "tete_vs_bras_beta120": 0.0,
    "tete_vs_bras_beta135": 0.0,
    "tete_vs_bras_beta150": [
-    412.933,
+    412.917,
     [
-     9.3,
+     110.0,
      -23.0,
-     31.0,
-     146.8,
+     83.1,
+     121.7,
      23.0,
-     116.7
+     99.8
     ]
    ],
-   "fourche_vs_ecrou_epaule": 5.086,
+   "fourche_vs_ecrou_epaule": 4.779,
    "fourche_vs_vis_epaule": 0.0,
    "vis_vs_ecrou_epaule(phase_alignee)": 0.0,
    "vis_vs_ecrou_epaule(distance_mini_mm)": 0.148,
-   "fourche_vs_ecrou_epaule_B": 5.064,
+   "fourche_vs_ecrou_epaule_B": 4.779,
    "fourche_vs_vis_epaule_B": 0.0,
    "vis_vs_ecrou_epaule_B(phase_alignee)": 0.0,
    "vis_vs_ecrou_epaule_B(distance_mini_mm)": 0.148,
-   "fourche_vs_ecrou_tete": 4.589,
+   "fourche_vs_ecrou_tete": 4.779,
    "fourche_vs_vis_tete": 0.0,
    "vis_vs_ecrou_tete(phase_alignee)": 0.0,
    "vis_vs_ecrou_tete(distance_mini_mm)": 0.148,
-   "fourche_vs_ecrou_tete_B": 4.589,
+   "fourche_vs_ecrou_tete_B": 4.779,
    "fourche_vs_vis_tete_B": 0.0,
    "vis_vs_ecrou_tete_B(phase_alignee)": 0.0,
    "vis_vs_ecrou_tete_B(distance_mini_mm)": 0.148,
    "vis_vs_ecrou_epaule(phase+180deg)": 20.849,
    "fourche_epaule_vs_collier": 0.0,
+   "collier_vs_pied": 0.0,
+   "goupille_collier_vs_pied": 0.0,
+   "goupille_collier_vs_collier": 0.0,
+   "collier_surplomb_alesage(z=h..h+0.3,r<ri-0.3)": 0.0,
    "fourche_tete_vs_coque": 0.0,
    "corps_vs_fourches": 0.0,
-   "cm3_vs_coque": 0.257,
-   "cm3_vs_facade(serrage_0.2_attendu)": 5.145,
+   "cm3_vs_coque": 0.255,
+   "cm3_vs_facade(serrage_0.2_attendu)": 5.102,
    "facade_vs_coque": 0.0
   },
   "montage_fourche_glissement_mm3": {
@@ -583,5 +587,5 @@
    "marge_mm": 41.6
   }
  },
- "duree_s": 580.7
+ "duree_s": 481.8
 }

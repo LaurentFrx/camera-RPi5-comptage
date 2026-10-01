@@ -74,7 +74,7 @@ for pose, titre in (("repos", "Pose « repos » : bras vertical, tête dans le p
 # ---- 3. détails : articulation d'épaule éclatée le long de l'axe Y ---------------------------------
 off = {"vis_epaule": T(0, 34, 0), "ecrou_epaule": T(0, 14, 0), "vis_epaule_B": T(0, -34, 0), "ecrou_epaule_B": T(0, -14, 0)}
 go("06_detail_epaule_eclate", {"view": [40, 24], "scale_bar_mm": 20,
-    "parts": parts_from_dir(A, names=["collier", "fourche_epaule", "vis_epaule", "ecrou_epaule", "vis_epaule_B", "ecrou_epaule_B", "bague", "pied", "bras_corps"], offsets=off),
+    "parts": parts_from_dir(A, names=["collier", "fourche_epaule", "vis_epaule", "ecrou_epaule", "vis_epaule_B", "ecrou_epaule_B", "goupille_collier", "pied", "bras_corps"], offsets=off),
     "title": "Articulation d'épaule éclatée suivant l'axe : vis → oreille crantée → écrou-rosette → noix, des deux côtés",
     "subtitle": "charnière symétrique : un écrou-rosette (hexagone 13) prisonnier de chaque plaque de noix, 24 dents (pas 15°) emboîtées dans chaque oreille, une vis par côté"})
 off2 = {"vis_tete": T(0, 34, 0), "ecrou_tete": T(0, 14, 0), "vis_tete_B": T(0, -34, 0), "ecrou_tete_B": T(0, -14, 0)}
@@ -102,12 +102,11 @@ go("11_tete_facade_face", {"view": "top", "scale_bar_mm": 10,
 
 # ---- 5. pièces seules, orientation d'impression (plateau = z = 0) -------------------------------
 pieces = [
-    ("01_pied_couvercle", "Pied pour couvercle : platine 50×46 décalée (bord affleurant la paroi), 4 fentes 3,4×8, fût creux Ø26/Ø20 — imprimé tel quel"),
+    ("01_pied_couvercle", "Pied pour couvercle : platine 50×46 décalée (bord affleurant la paroi), 4 fentes 3,4×8, fût creux Ø26/Ø20 rainuré — imprimé tel quel"),
     ("01c_gabarit_percage_couvercle", "Gabarit de perçage du couvercle (plaque 1,2 mm) : trou nappe Ø22 + 4 trous Ø3,4 — à poser sur le couvercle"),
     ("01a_pied_plat_centre", "Variante : platine 46×46 centrée sur le fût"),
     ("01b_cavalier_adaptateur", "Variante : adaptateur cavalier — imprimé retourné, joues vers le haut"),
-    ("02_bague_retenue", "Bague de retenue Ø32/Ø24,1 × 3 — emmanchée (ou collée) sur le tenon"),
-    ("03_collier_tourelle", "Collier-tourelle : anneau fendu Ø34/Ø26,3 × 12, pattes de serrage, noix d'épaule — imprimé debout"),
+    ("03_collier_tourelle", "Collier-tourelle : anneau fendu Ø34/Ø26,6 × 12, pattes de serrage, noix d'épaule sur pieds chanfreinés, bossage de goupille — imprimé debout"),
     ("04a_bras_corps_L150", "Corps de bras 124 × 24 × 8 (entraxe 150), canal 18 × 2,4 traversant — imprimé à plat (pont de 18 mm)"),
     ("04a_bras_corps_L170_alt", "Corps de bras alternatif 144 × 24 × 8 (entraxe 170) — si la mesure de nappe le permet"),
     ("04b_fourche_x2", "Fourche (×2) — imprimée debout sur le manchon : oreilles verticales crantées des deux côtés, entonnoir de canal"),
@@ -117,7 +116,7 @@ pieces = [
     ("08_vis_M8_L20", "Vis moletée M8 pas 2 L20 (collier)"),
     ("09_ecrou_rosette_x4", "Écrou-rosette (×4) — hexagone 3,5 sur le plateau, cône 45°, dents vers le haut"),
     ("10_ecrou_hex", "Écrou hexagonal 13 × 5"),
-    ("04c_goupille_x4", "Goupille Ø3 × 7 à tête (×4, facultative)"),
+    ("04c_goupille_x5", "Goupille Ø3 × 7 à tête (×5 : 4 pour les fourches, facultatives si collage ; 1 de retenue du collier)"),
 ]
 for n, titre in pieces:
     f = os.path.join(S, n + ".stl")

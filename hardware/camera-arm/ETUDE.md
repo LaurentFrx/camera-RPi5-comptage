@@ -16,7 +16,7 @@
 | Cinématique | **3 axes** : lacet (tourelle sur fût creux) + tangage d'épaule + tangage de tête | Pan/tilt indispensables pour viser une scène de comptage ; l'épaule règle hauteur et portée. Un 4ᵉ axe (coude) est possible sans changer les pièces (voir § 13). |
 | Passage de la nappe | **Intérieur** : fût creux Ø20 → fenêtre entre les plaques de noix → canal fermé 18 × 2,4 dans le bras → fente de la tête ; **toutes les entrées sont évasées** (entonnoirs) et les arêtes du fût chanfreinées | Nappe protégée, jamais pincée, enfilage sans accrochage ; longueur de trajet quasi constante quel que soit l'angle car **l'axe de chaque charnière est dans le plan de la nappe**. |
 | Articulations | Charnière « à fenêtre » **symétrique** : noix à 2 plaques + fourche à 2 oreilles crantées, serrage **de chaque côté** par une **vis moletée M8 imprimée** et un **écrou-rosette 24 dents** (pas 15°) | Verrouillage positif (crantage) insensible au fluage, contrairement à une friction pure ; visserie 100 % imprimée ; aucun jeu dans la charnière ; la fourche se monte par simple glissement sur la noix (écrous enfoncés), sans écarter les oreilles. |
-| Lacet | Collier fendu serré sur le fût par la même vis imprimée, bague de retenue emmanchée | Réglage continu 360° (limité par la torsion de nappe : ±90° conseillé), aucun filetage de grand diamètre à imprimer. |
+| Lacet | Collier fendu serré sur le fût par la même vis imprimée, rendu captif par une goupille Ø3 imprimée qui court dans une rainure du fût | Réglage continu 360° (limité par la torsion de nappe : ±90° conseillé), aucun filetage de grand diamètre à imprimer. |
 | Bras | **Deux pièces** : corps plat 24 × 8 (longueur paramétrable) + 2 fourches identiques emmanchées 21 mm | Chaque pièce s'imprime **sans support** ; changer la longueur = réimprimer le seul corps. |
 | Tête caméra | Coque + façade encliquetée ; PCB **plaqué sans jeu** sur les 4 plots de la coque (pions Ø1,8 de centrage) par les 4 fûts de la façade, portés par des **languettes-ressorts** découpées dans la plaque avant (précontrainte 0,2 mm) | Zéro vis M2, zéro jeu (vibrations) ; la caméra est référencée sur la pièce qui porte la charnière ; l'objectif ne touche jamais la façade ; respect de la zone du flex autofocus. |
 | Fixation au boîtier RPi5 | **Sur le couvercle** : pied à platine 50 × 46 dont le fût est décalé vers le bord (la platine affleure la paroi, la nappe monte à 16 mm du bord), 4 fentes 3,4 × 8 (2 à 4 vis M3 **ou** goupilles imprimées collées), trou Ø22 dans le couvercle sous le fût ; gabarit de perçage imprimable + DXF/SVG. Variantes : platine centrée, adaptateur « cavalier ». | Décision utilisateur du 30/09 : fixation sur couvercle. |
@@ -106,7 +106,7 @@ Conséquence : oreilles symétriques (±11 mm autour de l'axe), donc bras en **d
 
 ### 5.1 Repères et poses
 
-* Pied : Z vertical, platine en Z = −4…0, fût Ø26 jusqu'à Z = 12,5, tenon Ø24 jusqu'à 15,5, alésage Ø20 traversant.
+* Pied : Z vertical, platine en Z = −4…0, fût Ø26 lisse jusqu'à Z = 11,5 (rainure de retenue 3,4 × 1,2 centrée en Z = 6), alésage Ø20 traversant.
 * Collier-tourelle : Z = 0…12 ; **axe d'épaule** horizontal (Y) à Z = 28, à l'aplomb du fût.
 * Bras : X = longueur (entraxe `bras_L` = 150), Y = axes de charnière, Z = épaisseur ; plan de nappe Z = 0.
 * Tête : x = largeur PCB, y = hauteur (connecteur en bas), z = profondeur (objectif vers +z) ; axe de tête à 12 mm sous la paroi basse, dans le plan de nappe (z = 4,8).
@@ -132,7 +132,7 @@ Règle simple : **élévation = 180° − θ − β**. Pour viser vers le bas (c
 | Axe | Plage sans collision (calculée) | Plage recommandée | Limite physique |
 |---|---|---|---|
 | Lacet ψ | 360° | ±90° autour de la position neutre | torsion de la nappe sur ≈ 40 mm libres entre la sortie du boîtier Pi et l'épaule |
-| Épaule θ | 0 → 100° (5,7 mm³ de contact à 105°) | 0 → 95° | le bloc racine de la fourche touche la bague de retenue au-delà |
+| Épaule θ | 0 → 100° (4,021 mm³ de contact à 105°) | 0 → 95° | le bloc racine de la fourche touche le collier (pieds des plaques, anneau) au-delà |
 | Tête β | 0 → 135° (417 mm³ à 150°) | 0 → 120° | rayon de nappe 6,4 mm à 120°, 4,6 mm à 135° ; face arrière de la tête vers l'évasement de la fourche à 150° |
 
 ---
@@ -163,14 +163,14 @@ Impression **debout sur l'ouverture du manchon** : oreilles verticales, dents en
 
 Barre 24 × 8 × 124 (= `bras_L` − 26), canal 18 × 2,4 débouchant à **bouches chanfreinées 0,6** (entonnoirs), 2 trous de goupille à 17,5 mm de chaque bout. Imprimé à plat (pont de 18 mm sur toute la longueur : sans souci). Pour un autre entraxe, ne réimprimer que cette pièce (paramètre `bras_L`, ou variable d'environnement `ARM_L`).
 
-### 6.4 Pied, bague, collier-tourelle (lacet)
+### 6.4 Pied, collier-tourelle (lacet) et goupille de retenue
 
 ![Collier](renders/20_piece_03_collier_tourelle.png)
 
-* **Pied couvercle** (`01_pied_couvercle`) : platine 50 × 46 × 4 dont le fût est décalé de 10 mm vers le bord −y (bord de platine à 16 mm de l'axe du fût = rayon du congé) ; 4 fentes 3,4 × 8 en (±19, −8) et (±19, +24) ; fût Ø26 h 12,5 + congé, tenon Ø24 h 3, alésage Ø20 dont les deux arêtes (haut du tenon, dessous de la platine) sont **chanfreinées à 45° sur 1,2 mm** : la nappe de 16 mm y passe à plat, se tord au lacet et n'y frotte jamais sur une arête vive. Pose : bord −y de la platine affleurant la face extérieure de la paroi du boîtier côté connecteur CAM ; **trou Ø22 dans le couvercle** sous le fût, donc à 16 mm du bord extérieur du boîtier, et 4 trous Ø3,4 (ou 2 seulement) aux fentes. Le **gabarit** `01c_gabarit_percage_couvercle` (plaque 1,2 mm au contour de la platine, percée des 5 trous) se pose sur le couvercle pour pointer ; le même motif est fourni en `export/gabarit_couvercle.dxf` et `.svg` pour l'intégrer directement dans la CAO du couvercle.
+* **Pied couvercle** (`01_pied_couvercle`) : platine 50 × 46 × 4 dont le fût est décalé de 7 mm vers le bord −y (bord de platine à 16 mm de l'axe du fût : le fût garde 3 mm de platine devant lui, le trou Ø22 du gabarit 5 mm, et le trou du couvercle reste 2 mm à l'intérieur de la paroi) ; 4 fentes 3,4 × 8 en (±19, −8) et (±19, +22), à 4 mm des bords. *Correctif du 01/10 : la macro portait `pied_decal` = 10 (bord à 13 mm), d'où un fût tangent au bord, un trou de gabarit à 2 mm du bord et des fentes avant à 1 mm ; l'étude était déjà écrite pour 16 mm.* ; fût Ø26 **lisse** h 11,5 (il s'arrête 0,5 mm sous le haut du collier, sans congé à sa base pour que l'anneau du collier repose sur la platine), **rainure de retenue** 3,4 × 1,2 à mi-hauteur (Z = 6), alésage Ø20 dont les deux arêtes (haut du fût, dessous de la platine) sont **chanfreinées à 45° sur 1,2 mm** : la nappe de 16 mm y passe à plat, se tord au lacet et n'y frotte jamais sur une arête vive. Pose : bord −y de la platine affleurant la face extérieure de la paroi du boîtier côté connecteur CAM ; **trou Ø22 dans le couvercle** sous le fût, donc à 16 mm du bord extérieur du boîtier, et 4 trous Ø3,4 (ou 2 seulement) aux fentes. Le **gabarit** `01c_gabarit_percage_couvercle` (plaque 1,2 mm au contour de la platine, percée des 5 trous) se pose sur le couvercle pour pointer ; le même motif est fourni en `export/gabarit_couvercle.dxf` et `.svg` pour l'intégrer directement dans la CAO du couvercle.
 * **Variante platine centrée** (`01a_pied_plat_centre`) : 46 × 46, fentes en (±17, ±17), pour une surface d'accueil large.
-* **Bague de retenue** Ø32 / Ø24,1 × 3 : emmanchée (une goutte de colle) sur le tenon, elle emprisonne axialement le collier (jeu 0,5). Le collier se met en place **avant** la bague.
-* **Collier-tourelle** : anneau Ø34 / Ø26,3 × 12, fente 2 mm, deux pattes 8 × 9 × 10 (poche hexagonale d'un côté, passage Ø8,6 de l'autre) serrées par la vis M8 × 20 + écrou hexagonal 13 × 5 ; la noix d'épaule symétrique (2 plaques R10 à poche hexagonale, gap 18, col 16) est sur le dessus. Le serrage du collier fige le lacet par friction sur le fût (couple de tenue ≈ 0,4 N·m avec 100 N de serrage, très supérieur aux sollicitations d'une caméra fixe).
+* **Goupille de retenue** : la goupille Ø3 imprimée (la même que celles du bras, 5ᵉ exemplaire) traverse un bossage du collier (côté opposé aux pattes, Z = 6) et court dans la rainure du fût, engagée de 0,8 mm avec 0,5 mm de jeu axial : le collier tourne librement sur 360° mais ne peut plus être soulevé. Elle se retire par sa tête pour démonter.
+* **Collier-tourelle** : anneau Ø34 / Ø26,6 × 12, fente 2 mm, deux pattes 8 × 9 × 10 (poche hexagonale d'un côté, passage Ø8,6 de l'autre) serrées par la vis M8 × 20 + écrou hexagonal 13 × 5 ; la noix d'épaule symétrique (2 plaques R10 à poche hexagonale, gap 18, col 16) est posée sur le **mur de l'anneau** par deux **pieds chanfreinés à 45°** (face intérieure de Ø26,6 au niveau de l'anneau jusqu'aux faces de plaque écartées de 18, 4,3 mm plus haut) : rien ne surplombe l'alésage à l'impression, rien n'entre dans le volume du fût. Bossage Ø8 × 2 percé Ø3,2 pour la goupille de retenue. *Correctif du 01/10 soir : la version précédente faisait traverser aux plaques le tenon du fût (436 mm³) et la bague de retenue (431 mm³), la bague Ø32 ne pouvait pas passer entre les plaques (18), les plaques surplombaient l'alésage (175 mm³ sans rien dessous) et le congé du fût occupait le bas de l'anneau (318 mm³) ; tenon, bague et congé sont supprimés, et la macro contrôle désormais collier/pied, goupille/pied, goupille/collier et le surplomb.* Le serrage du collier fige le lacet par friction sur le fût (couple de tenue ≈ 0,4 N·m avec 100 N de serrage, très supérieur aux sollicitations d'une caméra fixe).
 * **Adaptateur cavalier** (variante) : platine 46 × 46 × 4 à cheval sur une paroi de `mur_ep` = 3 (+0,4 de jeu) ; joue extérieure 25 mm, intérieure 14 mm (paramètres), 2 trous Ø3,4 pour pincer la paroi à travers les fentes d'aération, 2 trous Ø3,4 recevant le pied plat, passage Ø22 pour la nappe. Imprimé retourné.
 
 ### 6.5 Tête caméra
@@ -241,6 +241,7 @@ Consignes de montage de la nappe (séquence détaillée au § 10, vérification 
 * **Filetage** (§ 6.6) : gorges présentes dans les deux écrous (6 et 5 transitions), interpénétration vis/écrou 0 mm³ à la phase alignée (pire des 4 vis d'articulation) contre 20,849 mm³ à un demi-pas de décalage, distance mini 0,148 mm (jeu 0,3). Ce contrôle a été ajouté après la découverte que la première construction produisait des vis lisses.
 * **Concordance des axes** : axe local du bras sur l'axe d'épaule (0, 0, 28) ; écart axe de tête = 0,000 mm.
 * **Interférences** (volumes communs, mm³) : 0 pour épaule 0/30/60/90/100°, tête 0/30/60/90/120/135° ; fourche/collier 0 ; fourche/coque 0 ; corps/fourches 0 ; vis/oreilles 0 ; filets vis/écrou 0 ; façade/coque 0. Valeurs non nulles **attendues** : oreilles/écrous-rosette 5,086, 5,064, 4,589, 4,589 mm³ (dents modélisées avec 3 % de recouvrement pour la robustesse booléenne), maquette CM3/coque 0,257 mm³ (recouvrement volontaire de 0,01 mm des plots), **maquette CM3/façade 5,145 mm³ = les 4 fûts qui dépassent de 0,2 mm** (précontrainte des languettes, § 6.5).
+* **Collier / pied** (correctif du 01/10 soir) : collier ∩ pied 0 mm³, goupille de retenue ∩ pied 0 (elle court dans la rainure), goupille ∩ collier 0, matière du collier en surplomb de l'alésage 0 mm³.
 * **Montage de la fourche sur la noix** (révision du 01/10) : fourche glissée suivant X de −30 à 0 mm par pas, écrous enfoncés de 1,5 mm : interférence maximale 0 mm³ sur tout le trajet, fourche/noix seule 0 mm³, jeu dents/dents au passage 0,5 mm ; écrous ramenés en position de travail : 9,558 mm³ (le recouvrement volontaire des dents).
 * **Serrage du PCB** : raideur des languettes (poutre encastrée, E = 3,3 GPa PLA / 2,1 GPa PETG), force totale 12,1 N (PLA) / 7,7 N (PETG) à 0,2 mm, plage 3–21,2 N sur ±0,15 de tolérance, déformation max 1,25 %, décollement du PCB au-delà de 77 g.
 * **Objectif** : dégagement axial 1,7 mm, latéral 1,25 mm par côté, demi-angle libre 60°.
@@ -263,16 +264,15 @@ Non vérifié (à faire sur pièces réelles) : couple de serrage réel des vis 
 
 | Fichier STL (`export/stl/`) | Qté | Orientation (déjà appliquée dans le STL) | Volume plein | Remarques |
 |---|---|---|---|---|
-| `01_pied_couvercle` | 1 | platine sur le plateau | ≈ 11 cm³ | fixation sur couvercle |
+| `01_pied_couvercle` | 1 | platine sur le plateau | 9,6 cm³ | fixation sur couvercle |
 | `01c_gabarit_percage_couvercle` | 1 | à plat | ≈ 2 cm³ | gabarit de pointage des 5 trous du couvercle |
-| `01a_pied_plat_centre` | 0/1 | platine sur le plateau | 10,3 cm³ | variante |
+| `01a_pied_plat_centre` | 0/1 | platine sur le plateau | 8,8 cm³ | variante |
 | `01b_cavalier_adaptateur` | 0/1 | retourné (joues en haut) | 13,9 cm³ | variante paroi |
-| `02_bague_retenue` | 1 | à plat | 1,0 cm³ | — |
-| `03_collier_tourelle` | 1 | debout (anneau sur le plateau) | 10,4 cm³ | brim 5 mm |
+| `03_collier_tourelle` | 1 | debout (anneau sur le plateau) | 8,7 cm³ | brim 5 mm ; pieds à 45° sans support |
 | `04a_bras_corps_L150` | 1 | à plat | 18,4 cm³ | pont 18 mm |
 | `04a_bras_corps_L170_alt` | 0/1 | à plat | ≈ 21 cm³ | alternative entraxe 170 |
 | `04b_fourche_x2` | **2** | debout sur le manchon | 11,5 cm³ | brim 5 mm ; crantées des deux côtés |
-| `04c_goupille_x4` | 4 | tête sur le plateau | 0,1 cm³ | facultatif (colle) |
+| `04c_goupille_x5` | 5 | tête sur le plateau | 0,1 cm³ | 4 pour les fourches (facultatives si colle), 1 de retenue du collier |
 | `05_tete_coque` | 1 | paroi haute sur le plateau, noix en haut | 6,8 cm³ | pont de 18 mm sur la fente nappe |
 | `06_tete_facade` | 1 | face avant sur le plateau | 4,8 cm³ | fentes de ressort 0,6 verticales ; 100 % de remplissage |
 | `07_vis_M8_L11_x4` | **4** | tête sur le plateau | 1,5 cm³ | couches 0,15 |
@@ -296,8 +296,8 @@ Total ≈ 87 cm³ « pleins », soit ≈ 75 à 85 g une fois remplis à 25 % ; d
 | Ajustement | Jeu prévu | Paramètre |
 |---|---|---|
 | Corps de bras dans le manchon de fourche | **0,1 par côté** (serré : poncer légèrement le bout du corps si besoin, puis coller) | `manchon_jeu` |
-| Collier sur fût | 0,15 par côté (Ø26,3 / Ø26) | `collier_jeu` |
-| Bague sur tenon | 0,05 (emmanchement serré) | `bague_jeu` |
+| Collier sur fût | 0,3 par côté (Ø26,6 / Ø26) | `collier_jeu` |
+| Goupille de retenue dans la rainure du fût | 0,8 mm d'engagement, 0,5 de jeu axial | `rainure_*`, `boss_goupille_L` |
 | PCB dans la coque | 0,3 / 0,27 par côté | `pcb_jeu_l`, `pcb_jeu_h` |
 | Jupe de façade sur épaulement | 0,15 par côté | `jupe_jeu` |
 | Hexagone dans les poches | 0,3 | `ecrou_jeu` |
@@ -316,7 +316,7 @@ Si ta Prusa imprime « gras » (trous étroits), augmente `vis_jeu` et `collier_
 Séquence révisée le 01/10 (vérifiée sur le modèle, § 16). Principe : on assemble d'abord toute la mécanique **sans la nappe**, on branche le Pi couvercle déposé, puis on enfile la nappe du Pi vers la tête et on branche la caméra en dernier, PCB hors de la coque.
 
 1. **Bras** : emmancher les deux fourches sur le corps (21 mm, ajustement serré 0,1 : poncer légèrement le bout du corps s'il force), goupilles Ø3 pour l'alignement, une goutte de cyanoacrylate sur deux faces de chaque emmanchement. Les fourches sont symétriques : aucun sens à respecter.
-2. **Base** : pied vissé ou goupillé sur le couvercle (gabarit § 6.4, couvercle déposé), collier enfilé sur le fût (pattes à l'opposé du sens de basculement du bras), bague de retenue emmanchée/collée sur le tenon ; vis L20 + écrou hexagonal dans les pattes, serrage léger.
+2. **Base** : pied vissé ou goupillé sur le couvercle (gabarit § 6.4, couvercle déposé), collier enfilé sur le fût jusqu'à la platine (pattes à l'opposé du sens de basculement du bras, bossage de goupille vers le bras), **goupille de retenue** enfoncée dans le bossage jusqu'à sa tête (sa pointe court dans la rainure du fût : le collier est captif et tourne librement) ; vis L20 + écrou hexagonal dans les pattes, serrage léger.
 3. **Charnières** (épaule puis tête) : pousser un écrou-rosette **au fond** de chaque poche hexagonale de la noix (il recule de 1,5 mm, dents vers l'extérieur), présenter la fourche dans l'axe du bras et la **glisser** sur la noix (oreilles de part et d'autre, rien à écarter), visser une vis L11 de chaque côté : chaque vis ramène son écrou contre l'oreille et les dents s'emboîtent. Serrer modérément pour l'instant.
 4. **Pi 5** : couvercle encore déposé, brancher l'extrémité **Mini** sur CAM/DISP 0 (verrou relevé, contacts vers la carte, verrou rabattu).
 5. **Enfilage** : passer l'extrémité **Standard** de bas en haut à travers le trou Ø22 du couvercle, l'alésage du fût, entre les plaques de noix du collier, dans la bouche évasée de la fourche d'épaule, le canal du corps, la fourche de tête, puis entre les plaques de noix de la coque et dans la fente de la paroi basse, jusqu'à ce qu'elle ressorte dans le logement du PCB. Pousser à la main, nappe à plat ; si elle bute, reculer de 5 mm et re-pousser (les entonnoirs la recentrent).
@@ -335,7 +335,7 @@ Réglage courant : desserrer ½ tour **les deux** vis de l'axe concerné, tourne
 | Vis M3 pour la platine | **0** (goupilles imprimées collées ou colle) | 2 à 4 × M3 × 8–12 + écrous ou inserts si tu préfères du démontable |
 | Autres | **0** | — |
 
-Tout le reste (5 vis, 5 écrous, 4 goupilles, bague) est imprimé.
+Tout le reste (5 vis, 5 écrous, 5 goupilles) est imprimé.
 
 ---
 
@@ -444,3 +444,12 @@ Demande : s'assurer que la nappe et ses connecteurs s'enfilent facilement dans l
 `07_vis_M8_L11_x4` et `09_ecrou_rosette_x4` (quantités 4), `04b_fourche_x2` (crantée des deux côtés, entonnoir), `04a_bras_corps_*` (bouches chanfreinées), `05_tete_coque` (noix symétrique, fente évasée), `06_tete_facade` (languettes, ouverture 14 chanfreinée, fûts +0,2, profondeur de tête 18,5 au lieu de 17), `01_pied_couvercle` et `01a` (alésage chanfreiné). Paramètres nouveaux : `chanf_canal`, `chanf_fenetre`, `chanf_fente`, `chanf_fut`, `pcb_serrage`, `ressort_*`, `ouverture_chanfrein` ; modifiés : `ecrou_corps` 3,5, `manchon_jeu` 0,1, `ouverture` 14, `objectif_h` 8,5, `jeu_objectif` 1,5, `pion_h` 0,8 ; supprimés : `axe_d`, `boss_B_*`, `axe_long`. Le kit de calibration imprimé le 01/10 (jeu 0,4) a montré une vis flottante : le jeu est passé à 0,3 (écrou à réimprimer, vis conservée).
 
 ![Façade de face](renders/11_tete_facade_face.png)
+
+### 16.4 Correctifs après mise sur plateau (01/10 soir)
+
+Deux défauts repérés en chargeant les STL dans PrusaSlicer, tous deux invisibles aux contrôles automatiques de l'époque :
+
+1. **Pied couvercle et gabarit** : fût tangent au bord de la platine, trou Ø22 du gabarit à 2 mm du bord, fentes avant à 1 mm. La macro décalait le fût de 10 mm (bord à 13 mm de l'axe) alors que l'étude est écrite pour 16 mm. Corrigé (`pied_decal` 7, fentes arrière à +22) : marges 5 / 3 / 4 mm.
+2. **Collier-tourelle** : les plaques de noix traversaient le tenon (436 mm³) et la bague de retenue (431 mm³), la bague Ø32 ne pouvait pas passer entre les plaques écartées de 18, les plaques surplombaient l'alésage (175 mm³ sans matière dessous, inimprimable) et le congé du fût occupait le bas de l'anneau (318 mm³ : le collier ne descendait pas sur la platine). Le contrôle « bras / base » fusionnait pied, bague et collier en un seul bloc et ne pouvait pas voir ces chevauchements. Refonte : fût lisse arrêté sous le collier, sans congé ; plaques posées sur le mur de l'anneau par des pieds chanfreinés à 45° ; retenue par une goupille Ø3 dans une rainure du fût ; quatre contrôles ajoutés (§ 8). Plage d'épaule recalculée : 0 → 100° sans contact.
+
+Pièces supprimées : `02_bague_retenue`. Pièces modifiées : `01_pied_couvercle`, `01a_pied_plat_centre`, `01c_gabarit_percage_couvercle`, `03_collier_tourelle` ; `04c_goupille` passe à 5 exemplaires.
