@@ -1,0 +1,39 @@
+{
+ "jeux": [
+  0.3,
+  0.4,
+  0.5
+ ],
+ "pieces": {
+  "vis_M8_L11": {
+   "valide": true,
+   "volume_cm3": 1.49
+  },
+  "20_kit_calibration_ecrou_rosette_jeu03": {
+   "jeu_radial": 0.3,
+   "marquage_points": 1,
+   "valide": true,
+   "volume_cm3": 1.19,
+   "taraudage_transitions": 7
+  },
+  "20_kit_calibration_ecrou_rosette_jeu04": {
+   "jeu_radial": 0.4,
+   "marquage_points": 2,
+   "valide": true,
+   "volume_cm3": 1.17,
+   "taraudage_transitions": 7
+  },
+  "20_kit_calibration_ecrou_rosette_jeu05": {
+   "jeu_radial": 0.5,
+   "marquage_points": 3,
+   "valide": true,
+   "volume_cm3": 1.15,
+   "taraudage_transitions": 7
+  }
+ },
+ "plateau_mm": [
+  96.9,
+  20.0,
+  16.0
+ ]
+}
