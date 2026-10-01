@@ -95,10 +95,10 @@
   "fente_pos": 17.0,
   "pied_cx": 50.0,
   "pied_cy": 46.0,
-  "pied_decal": 10.0,
+  "pied_decal": 7.0,
   "fente_x": 19.0,
   "fente_y_av": -8.0,
-  "fente_y_ar": 24.0,
+  "fente_y_ar": 22.0,
   "couvercle_trou": 22.0,
   "gabarit_ep": 1.2,
   "bras_L_alt": 170.0,
@@ -140,10 +140,10 @@
  "pieces": {
   "01_pied_couvercle": {
    "valide": true,
-   "volume_cm3": 10.87,
+   "volume_cm3": 10.92,
    "encombrement": [
     50.0,
-    49.0,
+    46.0,
     19.5
    ],
    "solides": 1
@@ -583,5 +583,5 @@
    "marge_mm": 41.6
   }
  },
- "duree_s": 580.7
+ "duree_s": 599.3
 }

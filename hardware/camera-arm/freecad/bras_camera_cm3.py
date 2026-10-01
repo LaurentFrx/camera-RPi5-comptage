@@ -65,7 +65,7 @@ P = dict(
     jupe_ep=1.2, jupe_h=6.0, jupe_jeu=0.15, crochet=0.6, crochet_L=8.0,
     # --- pied, fût creux, collier-tourelle ----------------------------------------------------
     pied_c=46.0, pied_ep=4.0, fente_l=3.4, fente_L=8.0, fente_pos=17.0,
-    pied_cx=50.0, pied_cy=46.0, pied_decal=10.0, fente_x=19.0, fente_y_av=-8.0, fente_y_ar=24.0,   # pied « couvercle » : fût décalé vers le bord
+    pied_cx=50.0, pied_cy=46.0, pied_decal=7.0, fente_x=19.0, fente_y_av=-8.0, fente_y_ar=22.0,    # pied « couvercle » : bord de platine à 16 mm de l'axe du fût (= rayon du congé), fentes à 4 mm des bords
     couvercle_trou=22.0, gabarit_ep=1.2, bras_L_alt=170.0,
     fut_d=26.0, fut_alesage=20.0, fut_h=12.5, tenon_d=24.0, tenon_h=3.0, bague_d=32.0, bague_jeu=0.1,
     collier_d=34.0, collier_jeu=0.3, collier_h=12.0, fente_collier=2.0,

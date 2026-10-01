@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="50.0mm" height="46.0mm" viewBox="-25.0 -33.0 50.0 46.0">
-<rect x="-25.0" y="-33.0" width="50.0" height="46.0" rx="4" fill="none" stroke="black" stroke-width="0.3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="50.0mm" height="46.0mm" viewBox="-25.0 -30.0 50.0 46.0">
+<rect x="-25.0" y="-30.0" width="50.0" height="46.0" rx="4" fill="none" stroke="black" stroke-width="0.3"/>
 <circle cx="0.0" cy="-0.0" r="11.0" fill="none" stroke="black" stroke-width="0.3"/>
 <text x="12.0" y="-0.0" font-size="2.2" font-family="sans-serif">Ø22</text>
 <circle cx="19.0" cy="8.0" r="1.7" fill="none" stroke="black" stroke-width="0.3"/>
 <text x="21.7" y="8.0" font-size="2.2" font-family="sans-serif">Ø3.4</text>
-<circle cx="19.0" cy="-24.0" r="1.7" fill="none" stroke="black" stroke-width="0.3"/>
-<text x="21.7" y="-24.0" font-size="2.2" font-family="sans-serif">Ø3.4</text>
+<circle cx="19.0" cy="-22.0" r="1.7" fill="none" stroke="black" stroke-width="0.3"/>
+<text x="21.7" y="-22.0" font-size="2.2" font-family="sans-serif">Ø3.4</text>
 <circle cx="-19.0" cy="8.0" r="1.7" fill="none" stroke="black" stroke-width="0.3"/>
 <text x="-16.3" y="8.0" font-size="2.2" font-family="sans-serif">Ø3.4</text>
-<circle cx="-19.0" cy="-24.0" r="1.7" fill="none" stroke="black" stroke-width="0.3"/>
-<text x="-16.3" y="-24.0" font-size="2.2" font-family="sans-serif">Ø3.4</text>
+<circle cx="-19.0" cy="-22.0" r="1.7" fill="none" stroke="black" stroke-width="0.3"/>
+<text x="-16.3" y="-22.0" font-size="2.2" font-family="sans-serif">Ø3.4</text>
 </svg>
