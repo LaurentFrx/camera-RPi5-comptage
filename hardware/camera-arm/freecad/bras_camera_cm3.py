@@ -50,7 +50,7 @@ P = dict(
     dents_n=24, dents_h=1.0, dents_r1=6.5, dents_r2=10.0,
     ecrou_hex=13.0, ecrou_corps=3.5, ecrou_poche=5.0, ecrou_jeu=0.3, ecrou_flasque_r=10.0,   # hexagone 3,5 dans une poche de 5 : l'écrou s'enfonce de 1,5 pour glisser la fourche
     # --- visserie imprimée M8 « pas gros » 2 mm --------------------------------------------
-    vis_dmaj=7.8, vis_pas=2.0, vis_prof=0.9, vis_jeu=0.4, vis_tete_d=18.0, vis_tete_h=5.0,
+    vis_dmaj=7.8, vis_pas=2.0, vis_prof=0.9, vis_jeu=0.3, vis_tete_d=18.0, vis_tete_h=5.0,
     vis_crete=0.35, vis_fond=0.5, filet_sections_par_pas=12, filet_points=48, vis_pointe=1.2,   # construction du filet par loft de sections
     vis_L_art=11.0, vis_L_collier=20.0, hexnut_h=5.0,
     # --- tête : Raspberry Pi Camera Module 3 (standard) -----------------------------------
