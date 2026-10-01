@@ -4,6 +4,10 @@
   "nappe_ep": 0.3,
   "canal_l": 18.0,
   "canal_h": 2.4,
+  "chanf_canal": 0.6,
+  "chanf_fenetre": 1.5,
+  "chanf_fente": 0.8,
+  "chanf_fut": 1.2,
   "bras_L": 150.0,
   "bras_l": 24.0,
   "bras_h": 8.0,
@@ -19,19 +23,15 @@
   "oreille_trou": 8.6,
   "manchon_L": 21.0,
   "manchon_ep": 2.8,
-  "manchon_jeu": 0.2,
+  "manchon_jeu": 0.1,
   "goupille_d": 3.2,
   "jeu_AB": 4.0,
-  "axe_d": 8.0,
-  "boss_B_d": 16.0,
-  "boss_B_ep": 3.5,
-  "axe_long": 3.5,
   "dents_n": 24,
   "dents_h": 1.0,
   "dents_r1": 6.5,
   "dents_r2": 10.0,
   "ecrou_hex": 13.0,
-  "ecrou_corps": 4.5,
+  "ecrou_corps": 3.5,
   "ecrou_poche": 5.0,
   "ecrou_jeu": 0.3,
   "ecrou_flasque_r": 10.0,
@@ -58,10 +58,11 @@
   "trous_dx": 21.0,
   "trous_dy": 12.5,
   "trou_bord_haut": 2.0,
-  "objectif_c": 11.0,
-  "objectif_h": 8.0,
-  "ouverture": 13.0,
+  "objectif_c": 11.5,
+  "objectif_h": 8.5,
+  "ouverture": 14.0,
   "ouverture_r": 3.0,
+  "ouverture_chanfrein": 0.6,
   "connecteur_l": 20.5,
   "connecteur_p": 5.5,
   "connecteur_h": 3.0,
@@ -70,11 +71,18 @@
   "fond": 2.0,
   "jeu_dos": 4.0,
   "facade_ep": 1.5,
-  "jeu_objectif": 0.5,
+  "jeu_objectif": 1.5,
   "rebord": 2.0,
   "plot_d": 3.6,
   "pion_d": 1.8,
-  "pion_h": 1.0,
+  "pion_h": 0.8,
+  "pcb_serrage": 0.2,
+  "ressort_l": 3.0,
+  "ressort_fente": 0.6,
+  "ressort_x0": 2.0,
+  "ressort_x1": 12.0,
+  "ressort_y0": -10.5,
+  "ressort_y1": 0.5,
   "jupe_ep": 1.2,
   "jupe_h": 6.0,
   "jupe_jeu": 0.15,
@@ -124,7 +132,7 @@
   "FOURCHE_L": 46.0,
   "TETE_L": 31.6,
   "TETE_H": 30.362,
-  "TETE_P": 17.0,
+  "TETE_P": 18.5,
   "Z_AXE_EPAULE": 28.0,
   "Y_AXE_TETE": -27.180999999999997,
   "Z_AXE_TETE": 4.8
@@ -132,7 +140,7 @@
  "pieces": {
   "01_pied_couvercle": {
    "valide": true,
-   "volume_cm3": 10.97,
+   "volume_cm3": 10.87,
    "encombrement": [
     50.0,
     49.0,
@@ -142,7 +150,7 @@
   },
   "01a_pied_plat_centre": {
    "valide": true,
-   "volume_cm3": 10.28,
+   "volume_cm3": 10.18,
    "encombrement": [
     46.0,
     46.0,
@@ -182,17 +190,17 @@
   },
   "03_collier_tourelle": {
    "valide": true,
-   "volume_cm3": 10.36,
+   "volume_cm3": 8.71,
    "encombrement": [
     43.0,
-    39.0,
-    41.9
+    34.0,
+    38.0
    ],
    "solides": 1
   },
   "04a_bras_corps_L150": {
    "valide": true,
-   "volume_cm3": 18.35,
+   "volume_cm3": 18.34,
    "encombrement": [
     124.0,
     24.0,
@@ -202,7 +210,7 @@
   },
   "04a_bras_corps_L170_alt": {
    "valide": true,
-   "volume_cm3": 21.33,
+   "volume_cm3": 21.31,
    "encombrement": [
     144.0,
     24.0,
@@ -212,7 +220,7 @@
   },
   "04b_fourche_x2": {
    "valide": true,
-   "volume_cm3": 11.39,
+   "volume_cm3": 11.46,
    "encombrement": [
     45.0,
     46.0,
@@ -232,25 +240,25 @@
   },
   "05_tete_coque": {
    "valide": true,
-   "volume_cm3": 8.3,
+   "volume_cm3": 6.85,
    "encombrement": [
-    37.8,
+    31.6,
     52.4,
-    22.2
+    23.7
    ],
    "solides": 1
   },
   "06_tete_facade": {
    "valide": true,
-   "volume_cm3": 4.36,
+   "volume_cm3": 4.75,
    "encombrement": [
     31.6,
     30.4,
-    14.0
+    15.5
    ],
    "solides": 1
   },
-  "07_vis_M8_L11_x2": {
+  "07_vis_M8_L11_x4": {
    "valide": true,
    "volume_cm3": 1.49,
    "encombrement": [
@@ -270,13 +278,13 @@
    ],
    "solides": 1
   },
-  "09_ecrou_rosette_x2": {
+  "09_ecrou_rosette_x4": {
    "valide": true,
-   "volume_cm3": 1.17,
+   "volume_cm3": 1.07,
    "encombrement": [
     21.4,
     21.4,
-    8.8
+    7.8
    ],
    "solides": 1
   },
@@ -292,21 +300,23 @@
   },
   "90_maquette_cm3": {
    "valide": true,
-   "volume_cm3": 1.87,
+   "volume_cm3": 2.02,
    "encombrement": [
     25.0,
     23.9,
-    12.0
+    12.5
    ],
    "solides": 1
   }
  },
  "verifications": {
   "taraudage_transitions": {
-   "ecrou_rosette": 7,
+   "ecrou_rosette": 6,
    "ecrou_hex": 5
   },
   "plage_phase_libre_deg": [
+   165.0,
+   165.0,
    165.0,
    165.0,
    165.0
@@ -316,7 +326,15 @@
     180.0,
     0
    ],
+   "vis_epaule_B": [
+    180.0,
+    0
+   ],
    "vis_tete": [
+    180.0,
+    0
+   ],
+   "vis_tete_B": [
     180.0,
     0
    ],
@@ -388,7 +406,7 @@
    "bras_vs_base_epaule90": 0.0,
    "bras_vs_base_epaule100": 0.0,
    "bras_vs_base_epaule105": [
-    5.733,
+    5.713,
     [
      -16.0,
      -23.0,
@@ -399,7 +417,7 @@
     ]
    ],
    "bras_vs_base_epaule110": [
-    62.569,
+    61.43,
     [
      -16.0,
      -23.0,
@@ -410,7 +428,7 @@
     ]
    ],
    "bras_vs_base_epaule120": [
-    424.118,
+    419.996,
     [
      -16.0,
      -23.0,
@@ -427,12 +445,12 @@
    "tete_vs_bras_beta120": 0.0,
    "tete_vs_bras_beta135": 0.0,
    "tete_vs_bras_beta150": [
-    416.96,
+    412.933,
     [
      9.3,
      -23.0,
      31.0,
-     145.5,
+     146.8,
      23.0,
      116.7
     ]
@@ -441,15 +459,107 @@
    "fourche_vs_vis_epaule": 0.0,
    "vis_vs_ecrou_epaule(phase_alignee)": 0.0,
    "vis_vs_ecrou_epaule(distance_mini_mm)": 0.201,
+   "fourche_vs_ecrou_epaule_B": 5.064,
+   "fourche_vs_vis_epaule_B": 0.0,
+   "vis_vs_ecrou_epaule_B(phase_alignee)": 0.0,
+   "vis_vs_ecrou_epaule_B(distance_mini_mm)": 0.201,
    "fourche_vs_ecrou_tete": 4.589,
    "fourche_vs_vis_tete": 0.0,
    "vis_vs_ecrou_tete(phase_alignee)": 0.0,
    "vis_vs_ecrou_tete(distance_mini_mm)": 0.201,
+   "fourche_vs_ecrou_tete_B": 4.589,
+   "fourche_vs_vis_tete_B": 0.0,
+   "vis_vs_ecrou_tete_B(phase_alignee)": 0.0,
+   "vis_vs_ecrou_tete_B(distance_mini_mm)": 0.201,
    "vis_vs_ecrou_epaule(phase+180deg)": 16.491,
    "fourche_epaule_vs_collier": 0.0,
    "fourche_tete_vs_coque": 0.0,
    "corps_vs_fourches": 0.0,
-   "cm3_vs_coque+facade": 0.257
+   "cm3_vs_coque": 0.257,
+   "cm3_vs_facade(serrage_0.2_attendu)": 5.145,
+   "facade_vs_coque": 0.0
+  },
+  "montage_fourche_glissement_mm3": {
+   "enfoncement_ecrous_mm": 1.5,
+   "trajet": {
+    "dx-30": 0.0,
+    "dx-25": 0.0,
+    "dx-20": 0.0,
+    "dx-15": 0.0,
+    "dx-10": 0.0,
+    "dx-6": 0.0,
+    "dx-3": 0.0,
+    "dx-1": 0.0,
+    "dx0": 0.0
+   },
+   "position_travail_ecrous": 9.558,
+   "fourche_vs_noix_seule": 0.0,
+   "jeu_dents_au_glissement_mm": 0.5
+  },
+  "serrage_pcb": {
+   "languettes_mm": {
+    "largeur": 3.0,
+    "epaisseur": 1.5,
+    "fente": 0.6,
+    "longueur_utile_hautes": 8.5,
+    "longueur_utile_basses": 7.93
+   },
+   "raideur_N_par_mm": {
+    "PLA_haute": 13.6,
+    "PLA_basse": 16.7,
+    "PETG_haute": 8.7,
+    "PETG_basse": 10.7
+   },
+   "precontrainte_nominale_mm": 0.2,
+   "force_totale_N": {
+    "PLA": 12.1,
+    "PETG": 7.7
+   },
+   "plage_tolerance_empilage_mm": [
+    0.05,
+    0.35
+   ],
+   "force_totale_N_pire_cas": {
+    "PLA": [
+     3.0,
+     21.2
+    ]
+   },
+   "deformation_max_pct": 1.25,
+   "masse_pcb_g": 4.0,
+   "acceleration_tenue_g": 77.0,
+   "reference_camera": "PCB plaqué sur les 4 plots rigides de la coque (pièce qui porte la charnière) ; les pions Ø1,8 centrent"
+  },
+  "objectif": {
+   "hauteur_bloc_mm": 8.5,
+   "face_interieure_facade_au_dessus_pcb_mm": 10.0,
+   "degagement_axial_mm": 1.7,
+   "ouverture_mm": 14.0,
+   "bloc_objectif_mm": 11.5,
+   "jeu_lateral_par_cote_mm": 1.25,
+   "chanfrein_avant_mm": 0.6,
+   "demi_angle_libre_deg": 60.0,
+   "remarque": "le bloc objectif ne touche jamais la façade : la caméra est référencée par son PCB (4 trous), serré sans jeu"
+  },
+  "passages_nappe": {
+   "fente de tête (paroi basse)": "18 × 2.4, entonnoirs 0.8 des deux côtés",
+   "bouche de fourche côté fenêtre": "18 × 2.4 évasée à 20 × 5.4",
+   "canal du corps": "18 × 2.4, bouches chanfreinées 0.6",
+   "fenêtre de noix": "18 entre plaques",
+   "alésage du fût": "Ø20, arêtes chanfreinées 1.2",
+   "trou du couvercle": "Ø22 (à chanfreiner/ébavurer)",
+   "connecteurs": "Standard 15 voies : 16 × ≈0,6 ; Mini 22 voies : ≤ 16 × ≈0,6 → passent partout",
+   "verrou du connecteur CM3": "coulisse vers le bord bas du PCB : inopérable PCB en place (jeu 0.25 mm) → brancher la nappe AVANT de poser le PCB"
+  },
+  "vibrations": {
+   "masse_en_bout_g": 31.1,
+   "masse_corps_g": 13.6,
+   "f1_Hz": {
+    "PLA_plan_faible": 47.0,
+    "PLA_plan_fort": 132.0,
+    "PETG_plan_faible": 37.0
+   },
+   "remarque": "sources (pas, ventilateur du Pi 5 : 30-130 Hz) d'amplitude micrométrique ; sans jeu dans la chaîne, l'image ne bouge pas"
   },
   "rayon_pliage_nappe_mm": {
    "beta30": 41.05,
@@ -473,5 +583,5 @@
    "marge_mm": 41.6
   }
  },
- "duree_s": 307.5
+ "duree_s": 575.3
 }
